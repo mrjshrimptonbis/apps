@@ -396,7 +396,7 @@
             // Repeat every 10ms (was 200)
             activeServoActions[command] = setInterval(() => {
                 sendUART(command);
-            }, 10);
+            }, 25);
         }
 
         function stopServoRepeat(command, btnElement) {
