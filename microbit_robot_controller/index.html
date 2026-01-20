@@ -198,7 +198,7 @@
             
             <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
                 <h2 class="text-xs font-bold text-gray-500 tracking-widest">MANIPULATOR ARMS</h2>
-                <div class="text-[10px] text-gray-600 font-mono">CONTINUAL PRESS MODE</div>
+                <div class="text-[10px] text-gray-600 font-mono">MANUAL STEP MODE</div>
             </div>
 
             <!-- Keyboard Layout Grid -->
@@ -382,31 +382,6 @@
             else connect();
         });
 
-        // --- Continuous Sending Logic for Servos ---
-        const activeServoActions = {}; // tracks interval IDs for each command
-
-        function startServoRepeat(command, btnElement) {
-            if (activeServoActions[command]) return; // Already running
-
-            if (btnElement) btnElement.classList.add('active');
-
-            // Send immediately once
-            sendUART(command);
-
-            // Repeat every 10ms (was 200)
-            activeServoActions[command] = setInterval(() => {
-                sendUART(command);
-            }, 25);
-        }
-
-        function stopServoRepeat(command, btnElement) {
-            if (activeServoActions[command]) {
-                clearInterval(activeServoActions[command]);
-                delete activeServoActions[command];
-            }
-            if (btnElement) btnElement.classList.remove('active');
-        }
-
         // --- Keyboard Controls ---
 
         // Map keys to servo commands and button IDs
@@ -429,7 +404,9 @@
             // Check if it's a servo key
             if (servoKeyMap[key]) {
                 const mapping = servoKeyMap[key];
-                startServoRepeat(mapping.cmd, document.getElementById(mapping.id));
+                const btn = document.getElementById(mapping.id);
+                if (btn) btn.classList.add('active');
+                sendUART(mapping.cmd); // Send once per press
                 return;
             }
 
@@ -465,7 +442,8 @@
             // Check if it's a servo key
             if (servoKeyMap[key]) {
                 const mapping = servoKeyMap[key];
-                stopServoRepeat(mapping.cmd, document.getElementById(mapping.id));
+                const btn = document.getElementById(mapping.id);
+                if (btn) btn.classList.remove('active');
                 return;
             }
 
@@ -520,7 +498,7 @@
         setupButton(btnSpeaker, "beep", null);
 
 
-        // --- Touch/Mouse Logic for Servo Buttons (Repeating) ---
+        // --- Touch/Mouse Logic for Servo Buttons (Single Press) ---
         // Find all buttons with data-cmd attribute
         document.querySelectorAll('.key-btn').forEach(btn => {
             const cmd = btn.getAttribute('data-cmd');
@@ -528,11 +506,12 @@
 
             const start = (e) => {
                 if(e.cancelable) e.preventDefault();
-                startServoRepeat(cmd, btn);
+                btn.classList.add('active');
+                sendUART(cmd); // Send once
             };
             const end = (e) => {
                 if(e.cancelable) e.preventDefault();
-                stopServoRepeat(cmd, btn);
+                btn.classList.remove('active');
             };
 
             btn.addEventListener('mousedown', start);
