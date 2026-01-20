@@ -146,12 +146,12 @@
     <!-- Main Control Area -->
     <main class="flex-grow flex flex-col md:flex-row p-4 gap-6 items-stretch justify-center overflow-hidden">
 
-        <!-- Left Column: D-Pad (Left) -->
-        <div class="w-full md:w-5/12 flex flex-col items-center justify-center p-6 bg-black rounded-xl border border-gray-800 shadow-2xl relative order-2 md:order-1">
+        <!-- Left Column: D-Pad (Left) - Adjusted to w-1/2 for balance -->
+        <div class="w-full md:w-1/2 flex flex-col items-center justify-center p-6 bg-black rounded-xl border border-gray-800 shadow-2xl relative order-2 md:order-1">
              <!-- Decorative Gold Edge Connector line -->
              <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-b-xl opacity-80"></div>
 
-            <div class="grid grid-cols-3 grid-rows-3 gap-3 w-full max-w-[300px] aspect-square">
+            <div class="grid grid-cols-3 grid-rows-3 gap-3 w-full max-w-[340px] aspect-square">
                 <!-- Top Row -->
                 <div></div>
                 <button id="btnUp" class="dpad-btn rounded-t-lg flex flex-col items-center justify-center hover:bg-gray-800">
@@ -190,14 +190,14 @@
             <div class="mt-4 text-xs text-gray-500 uppercase tracking-widest text-center">DRIVE: WASD Controls</div>
         </div>
 
-        <!-- Right Column: Servo Keyboard Grid (Right) -->
-        <div class="w-full md:w-7/12 flex flex-col p-6 bg-black rounded-xl border border-gray-800 shadow-2xl relative order-1 md:order-2">
+        <!-- Right Column: Servo Keyboard Grid (Right) - Adjusted to w-1/2 for balance -->
+        <div class="w-full md:w-1/2 flex flex-col p-6 bg-black rounded-xl border border-gray-800 shadow-2xl relative order-1 md:order-2">
             <!-- Decorative Gold Edge Connector line -->
             <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-b-xl opacity-80"></div>
             
             <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
                 <h2 class="text-xs font-bold text-gray-500 tracking-widest">MANIPULATOR ARMS</h2>
-                <div class="text-[10px] text-gray-600 font-mono">KEYBOARD MAPPING MODE</div>
+                <div class="text-[10px] text-gray-600 font-mono">CONTINUAL PRESS MODE</div>
             </div>
 
             <!-- Keyboard Layout Grid -->
@@ -211,44 +211,45 @@
                 <div class="text-center text-green-400 font-bold text-xs uppercase tracking-wider">SERVO 4</div>
 
                 <!-- Row 1: CLOSE Controls (Number Keys 7-0) -->
-                <button id="s1_close" class="key-btn close-btn" onmousedown="sendServo('servo1close')" ontouchstart="sendServo('servo1close')">
+                <!-- Removed inline handlers, using JS for repeatable logic -->
+                <button id="s1_close" class="key-btn close-btn" data-cmd="servo1close">
                     <span class="text-2xl font-bold">7</span>
                     <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
                 </button>
 
-                <button id="s2_close" class="key-btn close-btn" onmousedown="sendServo('servo2close')" ontouchstart="sendServo('servo2close')">
+                <button id="s2_close" class="key-btn close-btn" data-cmd="servo2close">
                     <span class="text-2xl font-bold">8</span>
                     <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
                 </button>
 
-                <button id="s3_close" class="key-btn close-btn" onmousedown="sendServo('servo3close')" ontouchstart="sendServo('servo3close')">
+                <button id="s3_close" class="key-btn close-btn" data-cmd="servo3close">
                     <span class="text-2xl font-bold">9</span>
                     <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
                 </button>
 
-                <button id="s4_close" class="key-btn close-btn" onmousedown="sendServo('servo4close')" ontouchstart="sendServo('servo4close')">
+                <button id="s4_close" class="key-btn close-btn" data-cmd="servo4close">
                     <span class="text-2xl font-bold">0</span>
                     <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
                 </button>
 
 
                 <!-- Row 2: OPEN Controls (Letter Keys U-P) -->
-                <button id="s1_open" class="key-btn" onmousedown="sendServo('servo1open')" ontouchstart="sendServo('servo1open')">
+                <button id="s1_open" class="key-btn" data-cmd="servo1open">
                     <span class="text-2xl font-bold">U</span>
                     <span class="text-[9px] opacity-50 mt-1">OPEN</span>
                 </button>
 
-                <button id="s2_open" class="key-btn" onmousedown="sendServo('servo2open')" ontouchstart="sendServo('servo2open')">
+                <button id="s2_open" class="key-btn" data-cmd="servo2open">
                     <span class="text-2xl font-bold">I</span>
                     <span class="text-[9px] opacity-50 mt-1">OPEN</span>
                 </button>
 
-                <button id="s3_open" class="key-btn" onmousedown="sendServo('servo3open')" ontouchstart="sendServo('servo3open')">
+                <button id="s3_open" class="key-btn" data-cmd="servo3open">
                     <span class="text-2xl font-bold">O</span>
                     <span class="text-[9px] opacity-50 mt-1">OPEN</span>
                 </button>
 
-                <button id="s4_open" class="key-btn" onmousedown="sendServo('servo4open')" ontouchstart="sendServo('servo4open')">
+                <button id="s4_open" class="key-btn" data-cmd="servo4open">
                     <span class="text-2xl font-bold">P</span>
                     <span class="text-[9px] opacity-50 mt-1">OPEN</span>
                 </button>
@@ -380,19 +381,58 @@
             else connect();
         });
 
-        // --- Wrapper to handle visual button feedback on click ---
-        window.sendServo = function(cmd) {
-            sendUART(cmd);
-        };
+        // --- Continuous Sending Logic for Servos ---
+        const activeServoActions = {}; // tracks interval IDs for each command
+
+        function startServoRepeat(command, btnElement) {
+            if (activeServoActions[command]) return; // Already running
+
+            if (btnElement) btnElement.classList.add('active');
+
+            // Send immediately once
+            sendUART(command);
+
+            // Repeat every 200ms
+            activeServoActions[command] = setInterval(() => {
+                sendUART(command);
+            }, 200);
+        }
+
+        function stopServoRepeat(command, btnElement) {
+            if (activeServoActions[command]) {
+                clearInterval(activeServoActions[command]);
+                delete activeServoActions[command];
+            }
+            if (btnElement) btnElement.classList.remove('active');
+        }
 
         // --- Keyboard Controls ---
+
+        // Map keys to servo commands and button IDs
+        const servoKeyMap = {
+            'u': { cmd: 'servo1open', id: 's1_open' },
+            '7': { cmd: 'servo1close', id: 's1_close' },
+            'i': { cmd: 'servo2open', id: 's2_open' },
+            '8': { cmd: 'servo2close', id: 's2_close' },
+            'o': { cmd: 'servo3open', id: 's3_open' },
+            '9': { cmd: 'servo3close', id: 's3_close' },
+            'p': { cmd: 'servo4open', id: 's4_open' },
+            '0': { cmd: 'servo4close', id: 's4_close' }
+        };
 
         document.addEventListener('keydown', (e) => {
             if (e.repeat) return; 
 
             const key = e.key.toLowerCase();
 
-            // WASD Movement
+            // Check if it's a servo key
+            if (servoKeyMap[key]) {
+                const mapping = servoKeyMap[key];
+                startServoRepeat(mapping.cmd, document.getElementById(mapping.id));
+                return;
+            }
+
+            // WASD Movement (Single send on press, Stop on release)
             switch(key) {
                 case "w":
                     btnUp.classList.add('active');
@@ -415,54 +455,21 @@
                     btnSpeaker.classList.add('active');
                     sendUART("beep");
                     break;
-                
-                // Servo 1: U (Open) / 7 (Close)
-                case "u":
-                    document.getElementById('s1_open').classList.add('active');
-                    sendUART("servo1open");
-                    break;
-                case "7":
-                    document.getElementById('s1_close').classList.add('active');
-                    sendUART("servo1close");
-                    break;
-
-                // Servo 2: I (Open) / 8 (Close)
-                case "i":
-                    document.getElementById('s2_open').classList.add('active');
-                    sendUART("servo2open");
-                    break;
-                case "8":
-                    document.getElementById('s2_close').classList.add('active');
-                    sendUART("servo2close");
-                    break;
-
-                // Servo 3: O (Open) / 9 (Close)
-                case "o":
-                    document.getElementById('s3_open').classList.add('active');
-                    sendUART("servo3open");
-                    break;
-                case "9":
-                    document.getElementById('s3_close').classList.add('active');
-                    sendUART("servo3close");
-                    break;
-
-                // Servo 4: P (Open) / 0 (Close)
-                case "p":
-                    document.getElementById('s4_open').classList.add('active');
-                    sendUART("servo4open");
-                    break;
-                case "0":
-                    document.getElementById('s4_close').classList.add('active');
-                    sendUART("servo4close");
-                    break;
             }
         });
 
         document.addEventListener('keyup', (e) => {
             const key = e.key.toLowerCase();
 
+            // Check if it's a servo key
+            if (servoKeyMap[key]) {
+                const mapping = servoKeyMap[key];
+                stopServoRepeat(mapping.cmd, document.getElementById(mapping.id));
+                return;
+            }
+
+            // WASD Release
             switch(key) {
-                // Directionals - Send Stop
                 case "w":
                     btnUp.classList.remove('active');
                     sendUART("stop");
@@ -482,19 +489,6 @@
                 case " ":
                     btnSpeaker.classList.remove('active');
                     break;
-
-                // Servos - Just remove visual active state (no stop cmd needed usually)
-                case "u": document.getElementById('s1_open').classList.remove('active'); break;
-                case "7": document.getElementById('s1_close').classList.remove('active'); break;
-                
-                case "i": document.getElementById('s2_open').classList.remove('active'); break;
-                case "8": document.getElementById('s2_close').classList.remove('active'); break;
-
-                case "o": document.getElementById('s3_open').classList.remove('active'); break;
-                case "9": document.getElementById('s3_close').classList.remove('active'); break;
-
-                case "p": document.getElementById('s4_open').classList.remove('active'); break;
-                case "0": document.getElementById('s4_close').classList.remove('active'); break;
             }
         });
 
@@ -514,7 +508,6 @@
             btn.addEventListener('mousedown', start);
             btn.addEventListener('mouseup', end);
             btn.addEventListener('mouseleave', end);
-            
             btn.addEventListener('touchstart', start);
             btn.addEventListener('touchend', end);
         };
@@ -524,6 +517,29 @@
         setupButton(btnLeft, "left", "stop");
         setupButton(btnRight, "right", "stop");
         setupButton(btnSpeaker, "beep", null);
+
+
+        // --- Touch/Mouse Logic for Servo Buttons (Repeating) ---
+        // Find all buttons with data-cmd attribute
+        document.querySelectorAll('.key-btn').forEach(btn => {
+            const cmd = btn.getAttribute('data-cmd');
+            if(!cmd) return;
+
+            const start = (e) => {
+                if(e.cancelable) e.preventDefault();
+                startServoRepeat(cmd, btn);
+            };
+            const end = (e) => {
+                if(e.cancelable) e.preventDefault();
+                stopServoRepeat(cmd, btn);
+            };
+
+            btn.addEventListener('mousedown', start);
+            btn.addEventListener('mouseup', end);
+            btn.addEventListener('mouseleave', end);
+            btn.addEventListener('touchstart', start);
+            btn.addEventListener('touchend', end);
+        });
 
     </script>
 </body>
