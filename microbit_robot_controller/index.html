@@ -151,7 +151,8 @@
              <!-- Decorative Gold Edge Connector line -->
              <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-b-xl opacity-80"></div>
 
-            <div class="grid grid-cols-3 grid-rows-3 gap-3 w-full max-w-[340px] aspect-square">
+            <!-- Increased max-w from 340px to 500px to match servo buttons size -->
+            <div class="grid grid-cols-3 grid-rows-3 gap-3 w-full max-w-[500px] aspect-square">
                 <!-- Top Row -->
                 <div></div>
                 <button id="btnUp" class="dpad-btn rounded-t-lg flex flex-col items-center justify-center hover:bg-gray-800">
@@ -392,10 +393,10 @@
             // Send immediately once
             sendUART(command);
 
-            // Repeat every 200ms
+            // Repeat every 10ms (was 200)
             activeServoActions[command] = setInterval(() => {
                 sendUART(command);
-            }, 200);
+            }, 10);
         }
 
         function stopServoRepeat(command, btnElement) {
