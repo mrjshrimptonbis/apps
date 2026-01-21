@@ -52,25 +52,6 @@
             color: white;
         }
 
-        .code-block {
-            background-color: #0d0d0d;
-            border: 1px solid #333;
-            border-left: 4px solid var(--accent-green);
-            padding: 1.5rem;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            color: #d4d4d4;
-            margin: 1rem 0;
-            overflow-x: auto;
-            white-space: pre;
-            line-height: 1.4;
-        }
-
-        .comment { color: #6a9955; }
-        .keyword { color: #c586c0; }
-        .string { color: #ce9178; }
-        .function { color: #dcdcaa; }
-
         .key-badge {
             display: inline-block;
             background: #333;
@@ -102,6 +83,15 @@
             color: black;
             border-color: var(--accent-green);
         }
+        
+        .instruction-img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #333;
+            border-radius: 4px;
+            margin-top: 1rem;
+            display: block;
+        }
     </style>
 </head>
 <body class="p-8 max-w-5xl mx-auto">
@@ -122,11 +112,14 @@
             This web application acts as a Bluetooth Low Energy (BLE) remote control for a BBC Microbit robot. 
             It allows you to drive the robot using keyboard or touch controls and manipulate up to 4 servo motors connected to the Microbit's expansion pins.
         </p>
+        <img src="robot_example.png" alt="Example robot configuration" class="instruction-img mx-auto max-h-64">
     </div>
 
     <div class="card">
         <h2>2. Wiring the Microbit</h2>
-        <p>To use the Manipulator Arm functions, you must wire your servo motors to specific pins on the Microbit. Ensure you are using an expansion board (like the LOFI Robot board or a standard breakout) that can power the servos, as the Microbit alone cannot power 4 motors.</p>
+        <p>To use the Manipulator Arm functions, you must wire your servo motors to specific pins on the Microbit. Ensure you are using an expansion board, like the DFRobot Motor Driver Board pictured below, that can power the servos, as the Microbit alone cannot power 4 motors.</p>
+        
+        <img src="dfrobot_motor_driver.png" alt="DFRobot Motor Driver Board" class="instruction-img mx-auto max-h-64 mb-6">
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div class="bg-white/5 p-4 rounded border border-white/10">
@@ -176,15 +169,19 @@
     <div class="card">
         <h2>4. Microbit Code</h2>
         <p class="mb-4">
-            You can either open the project directly in MakeCode or copy the JavaScript code below into the MakeCode JavaScript editor.
+            The Microbit needs specific code to understand the Bluetooth signals sent by this website. 
+            You must flash the following MakeCode project to your device.
         </p>
         
         <!-- Button Area -->
-        <div class="mb-6">
+        <div class="text-center py-6 bg-green-900/20 border border-green-500/30 rounded-lg">
+            <p class="mb-4 font-bold text-lg">REQUIRED MAKECODE PROJECT</p>
             <a href="https://makecode.microbit.org/S19102-28888-92943-62545" target="_blank" class="inline-block bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded transition-colors no-underline">
                 OPEN PROJECT IN MAKECODE &rarr;
             </a>
+            <p class="text-xs text-gray-500 mt-2">Click "Edit", then "Download" to flash to your Microbit.</p>
         </div>
+    </div>
 
     <footer class="text-center text-gray-600 text-xs mt-8 pb-8">
         &copy; 2025 Robot Control Interface.
