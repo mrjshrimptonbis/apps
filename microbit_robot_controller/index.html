@@ -47,6 +47,18 @@
             box-shadow: 0 0 20px var(--accent-green);
         }
 
+        .help-btn {
+            background-color: transparent;
+            border: 2px solid #555;
+            color: #888;
+            transition: all 0.2s ease;
+        }
+        
+        .help-btn:hover {
+            border-color: var(--connector-gold);
+            color: var(--connector-gold);
+        }
+
         /* D-Pad Styling */
         .dpad-btn {
             background-color: #222;
@@ -135,12 +147,20 @@
                 <div class="led-dot"></div>
                 <div class="led-dot on"></div>
             </div>
-            <h1 class="text-xl font-bold tracking-wider text-green-400">MICRO:BIT<span class="text-white text-sm ml-2 opacity-70">CONTROL</span></h1>
+            <div class="flex flex-col">
+                <h1 class="text-xl font-bold tracking-wider text-green-400 leading-none">MICRO:BIT<span class="text-white text-sm ml-2 opacity-70">CONTROL</span></h1>
+                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.0</span>
+            </div>
         </div>
-        <button id="connectBtn" class="connect-btn px-6 py-2 rounded-md font-bold text-sm tracking-widest flex items-center gap-2">
-            <span id="btIcon">⚡</span>
-            <span id="btText">CONNECT</span>
-        </button>
+        <div class="flex gap-2">
+            <a href="help.html" target="_blank" class="help-btn px-4 py-2 rounded-md font-bold text-sm tracking-widest flex items-center gap-2 no-underline">
+                <span>?</span> HELP
+            </a>
+            <button id="connectBtn" class="connect-btn px-6 py-2 rounded-md font-bold text-sm tracking-widest flex items-center gap-2">
+                <span id="btIcon">⚡</span>
+                <span id="btText">CONNECT</span>
+            </button>
+        </div>
     </header>
 
     <!-- Main Control Area -->
@@ -196,61 +216,75 @@
             <!-- Decorative Gold Edge Connector line -->
             <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-b-xl opacity-80"></div>
             
-            <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
-                <h2 class="text-xs font-bold text-gray-500 tracking-widest">MANIPULATOR ARMS</h2>
+            <div class="flex justify-between items-center mb-1 border-b border-gray-800 pb-2">
+                <div class="flex flex-col">
+                    <h2 class="text-xs font-bold text-gray-400 tracking-widest">MANIPULATOR ARMS</h2>
+                    <span class="text-[9px] text-gray-600 font-mono">CONTROLS MOTORS ON PINS 13-16</span>
+                </div>
                 <div class="text-[10px] text-gray-600 font-mono">MANUAL STEP MODE</div>
             </div>
 
             <!-- Keyboard Layout Grid -->
             <!-- 4 Columns (Servos), 3 Rows (Header, Top Keys, Bottom Keys) -->
-            <div class="grid grid-cols-4 gap-3 h-full pb-4">
+            <div class="grid grid-cols-4 gap-3 h-full pb-4 pt-2">
                 
                 <!-- Headers -->
-                <div class="text-center text-green-400 font-bold text-xs uppercase tracking-wider">SERVO 1</div>
-                <div class="text-center text-green-400 font-bold text-xs uppercase tracking-wider">SERVO 2</div>
-                <div class="text-center text-green-400 font-bold text-xs uppercase tracking-wider">SERVO 3</div>
-                <div class="text-center text-green-400 font-bold text-xs uppercase tracking-wider">SERVO 4</div>
+                <div class="flex flex-col items-center justify-end pb-1">
+                    <div class="text-center text-green-400 font-bold text-xs uppercase tracking-wider leading-none">PIN 13</div>
+                    <div class="text-[8px] text-gray-600 font-mono">SERVO 1</div>
+                </div>
+                <div class="flex flex-col items-center justify-end pb-1">
+                    <div class="text-center text-green-400 font-bold text-xs uppercase tracking-wider leading-none">PIN 14</div>
+                    <div class="text-[8px] text-gray-600 font-mono">SERVO 2</div>
+                </div>
+                <div class="flex flex-col items-center justify-end pb-1">
+                    <div class="text-center text-green-400 font-bold text-xs uppercase tracking-wider leading-none">PIN 15</div>
+                    <div class="text-[8px] text-gray-600 font-mono">SERVO 3</div>
+                </div>
+                <div class="flex flex-col items-center justify-end pb-1">
+                    <div class="text-center text-green-400 font-bold text-xs uppercase tracking-wider leading-none">PIN 16</div>
+                    <div class="text-[8px] text-gray-600 font-mono">SERVO 4</div>
+                </div>
 
                 <!-- Row 1: CLOSE Controls (Number Keys 7-0) -->
-                <!-- Removed inline handlers, using JS for repeatable logic -->
-                <button id="s1_close" class="key-btn close-btn" data-cmd="servo1close">
+                <button id="s1_close" class="key-btn close-btn" data-cmd="pin13close">
                     <span class="text-2xl font-bold">7</span>
                     <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
                 </button>
 
-                <button id="s2_close" class="key-btn close-btn" data-cmd="servo2close">
+                <button id="s2_close" class="key-btn close-btn" data-cmd="pin14close">
                     <span class="text-2xl font-bold">8</span>
                     <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
                 </button>
 
-                <button id="s3_close" class="key-btn close-btn" data-cmd="servo3close">
+                <button id="s3_close" class="key-btn close-btn" data-cmd="pin15close">
                     <span class="text-2xl font-bold">9</span>
                     <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
                 </button>
 
-                <button id="s4_close" class="key-btn close-btn" data-cmd="servo4close">
+                <button id="s4_close" class="key-btn close-btn" data-cmd="pin16close">
                     <span class="text-2xl font-bold">0</span>
                     <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
                 </button>
 
 
                 <!-- Row 2: OPEN Controls (Letter Keys U-P) -->
-                <button id="s1_open" class="key-btn" data-cmd="servo1open">
+                <button id="s1_open" class="key-btn" data-cmd="pin13open">
                     <span class="text-2xl font-bold">U</span>
                     <span class="text-[9px] opacity-50 mt-1">OPEN</span>
                 </button>
 
-                <button id="s2_open" class="key-btn" data-cmd="servo2open">
+                <button id="s2_open" class="key-btn" data-cmd="pin14open">
                     <span class="text-2xl font-bold">I</span>
                     <span class="text-[9px] opacity-50 mt-1">OPEN</span>
                 </button>
 
-                <button id="s3_open" class="key-btn" data-cmd="servo3open">
+                <button id="s3_open" class="key-btn" data-cmd="pin15open">
                     <span class="text-2xl font-bold">O</span>
                     <span class="text-[9px] opacity-50 mt-1">OPEN</span>
                 </button>
 
-                <button id="s4_open" class="key-btn" data-cmd="servo4open">
+                <button id="s4_open" class="key-btn" data-cmd="pin16open">
                     <span class="text-2xl font-bold">P</span>
                     <span class="text-[9px] opacity-50 mt-1">OPEN</span>
                 </button>
@@ -385,15 +419,19 @@
         // --- Keyboard Controls ---
 
         // Map keys to servo commands and button IDs
+        // UPDATED: Now sends pinXXopen/close commands
         const servoKeyMap = {
-            'u': { cmd: 'servo1open', id: 's1_open' },
-            '7': { cmd: 'servo1close', id: 's1_close' },
-            'i': { cmd: 'servo2open', id: 's2_open' },
-            '8': { cmd: 'servo2close', id: 's2_close' },
-            'o': { cmd: 'servo3open', id: 's3_open' },
-            '9': { cmd: 'servo3close', id: 's3_close' },
-            'p': { cmd: 'servo4open', id: 's4_open' },
-            '0': { cmd: 'servo4close', id: 's4_close' }
+            'u': { cmd: 'pin13open', id: 's1_open' },
+            '7': { cmd: 'pin13close', id: 's1_close' },
+            
+            'i': { cmd: 'pin14open', id: 's2_open' },
+            '8': { cmd: 'pin14close', id: 's2_close' },
+            
+            'o': { cmd: 'pin15open', id: 's3_open' },
+            '9': { cmd: 'pin15close', id: 's3_close' },
+            
+            'p': { cmd: 'pin16open', id: 's4_open' },
+            '0': { cmd: 'pin16close', id: 's4_close' }
         };
 
         document.addEventListener('keydown', (e) => {
