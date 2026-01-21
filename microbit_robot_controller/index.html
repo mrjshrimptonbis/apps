@@ -236,7 +236,7 @@
                 </div>
 
                 <!-- Tank Panel (Hidden by default) -->
-                <div id="panelTank" class="hidden w-full h-full flex items-center justify-center gap-8 max-w-[400px]">
+                <div id="panelTank" class="hidden w-full h-full flex items-center justify-center gap-4 max-w-[400px]">
                     
                     <!-- Left Track -->
                     <div class="flex-1 h-full flex flex-col gap-2">
@@ -246,6 +246,14 @@
                         </button>
                         <button id="btnL_Back" class="dpad-btn flex-1 rounded-b-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl" onmousedown="startTank('leftbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftbackward', this)" ontouchend="stopTank(this)">
                             ▼ <span class="text-[10px] opacity-50">Q</span>
+                        </button>
+                    </div>
+
+                    <!-- Center Speaker (Tank) -->
+                    <div class="flex items-center justify-center">
+                        <button id="btnSpeakerTank" class="speaker-btn w-16 h-16 flex flex-col items-center justify-center shadow-lg" title="Horn (Spacebar)">
+                            <span class="text-xl">🔊</span>
+                            <span class="text-[8px] mt-1 opacity-70">SPACE</span>
                         </button>
                     </div>
 
@@ -375,12 +383,13 @@
         const btnLeft = document.getElementById('btnLeft');
         const btnRight = document.getElementById('btnRight');
         const btnSpeaker = document.getElementById('btnSpeaker');
-
+        
         // Tank UI Buttons
         const btnL_Fwd = document.getElementById('btnL_Fwd');
         const btnL_Back = document.getElementById('btnL_Back');
         const btnR_Fwd = document.getElementById('btnR_Fwd');
         const btnR_Back = document.getElementById('btnR_Back');
+        const btnSpeakerTank = document.getElementById('btnSpeakerTank');
 
 
         // --- UI Switching ---
@@ -527,6 +536,7 @@
             if (key === " ") {
                 e.preventDefault();
                 btnSpeaker.classList.add('active');
+                btnSpeakerTank.classList.add('active'); // Highlight tank button too
                 sendUART("beep");
                 return;
             }
@@ -588,6 +598,7 @@
             // 2. Spacebar
             if (key === " ") {
                 btnSpeaker.classList.remove('active');
+                btnSpeakerTank.classList.remove('active');
                 return;
             }
 
@@ -636,6 +647,7 @@
         setupButton(btnLeft, "left", "stop");
         setupButton(btnRight, "right", "stop");
         setupButton(btnSpeaker, "beep", null);
+        setupButton(btnSpeakerTank, "beep", null);
 
 
         // --- Touch/Mouse Logic for Servo Buttons ---
