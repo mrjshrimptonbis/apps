@@ -110,32 +110,35 @@
         <h2>1. Overview</h2>
         <p>
             This web application acts as a Bluetooth Low Energy (BLE) remote control for a BBC Microbit robot. 
-            It allows you to drive the robot using keyboard or touch controls and manipulate up to 4 servo motors connected to the Microbit's expansion pins.
+            It allows you to drive the robot using two different modes (WASD or L/R Tank) and manipulate up to 4 servo motors connected to the Microbit's expansion pins.
         </p>
         <img src="robot_example.png" alt="Example robot configuration" class="instruction-img mx-auto max-h-64">
     </div>
 
     <div class="card">
         <h2>2. Wiring the Microbit</h2>
-        <p>To use the Manipulator Arm functions, you must wire your servo motors to specific pins on the Microbit. Ensure you are using an expansion board, like the DFRobot Motor Driver Board pictured below, that can power the servos, as the Microbit alone cannot power 4 motors.</p>
+        <p class="mb-4">You will need an expansion board (like the DFRobot Motor Driver Board pictured below) to power the motors and servos, as the Microbit alone cannot provide enough current.</p>
         
         <img src="dfrobot_motor_driver.png" alt="DFRobot Motor Driver Board" class="instruction-img mx-auto max-h-64 mb-6">
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div class="bg-white/5 p-4 rounded border border-white/10">
-                <h3 class="text-white text-lg">Signal Pin Map</h3>
+                <h3 class="text-white text-lg">Driving Motors (360° Servos)</h3>
+                <p class="text-gray-400 text-sm mb-2">Connect your continuous rotation servos to the primary motor pins defined in the MakeCode project.</p>
                 <ul class="list-disc ml-5 space-y-2 text-gray-300">
-                    <li><strong>Servo 1:</strong> Connect Signal wire to <span class="text-yellow-500 font-bold">PIN 13</span></li>
-                    <li><strong>Servo 2:</strong> Connect Signal wire to <span class="text-yellow-500 font-bold">PIN 14</span></li>
-                    <li><strong>Servo 3:</strong> Connect Signal wire to <span class="text-yellow-500 font-bold">PIN 15</span></li>
-                    <li><strong>Servo 4:</strong> Connect Signal wire to <span class="text-yellow-500 font-bold">PIN 16</span></li>
+                    <li><strong>Left Wheel:</strong> Connect to <span class="text-yellow-500 font-bold">PIN 0</span></li>
+                    <li><strong>Right Wheel:</strong> Connect to <span class="text-yellow-500 font-bold">PIN 1</span></li>
                 </ul>
             </div>
+
             <div class="bg-white/5 p-4 rounded border border-white/10">
-                <h3 class="text-white text-lg">Power Connections</h3>
+                <h3 class="text-white text-lg">Manipulator Arms (Standard Servos)</h3>
+                <p class="text-gray-400 text-sm mb-2">Connect standard 180° servos to these specific pins for the arm controls.</p>
                 <ul class="list-disc ml-5 space-y-2 text-gray-300">
-                    <li><strong>Red Wire (VCC):</strong> Connect to external 5V-6V power source (Battery pack).</li>
-                    <li><strong>Brown/Black Wire (GND):</strong> Connect to Ground (GND). <strong>Important:</strong> Share ground with Microbit.</li>
+                    <li><strong>Servo 1:</strong> <span class="text-yellow-500 font-bold">PIN 13</span></li>
+                    <li><strong>Servo 2:</strong> <span class="text-yellow-500 font-bold">PIN 14</span></li>
+                    <li><strong>Servo 3:</strong> <span class="text-yellow-500 font-bold">PIN 15</span></li>
+                    <li><strong>Servo 4:</strong> <span class="text-yellow-500 font-bold">PIN 16</span></li>
                 </ul>
             </div>
         </div>
@@ -143,25 +146,44 @@
 
     <div class="card">
         <h2>3. Controls</h2>
+        <p class="text-gray-400 mb-4">Switch between Driving Modes using the tabs on the controller interface.</p>
+        
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Mode 1 -->
             <div>
-                <h3 class="text-white text-sm uppercase tracking-widest border-b border-gray-700 pb-2 mb-4">Driving</h3>
+                <h3 class="text-white text-sm uppercase tracking-widest border-b border-gray-700 pb-2 mb-4">WASD MODE (Standard)</h3>
                 <ul class="space-y-3">
-                    <li><span class="key-badge">W</span> or <span class="key-badge">▲</span> : Drive Forward</li>
-                    <li><span class="key-badge">S</span> or <span class="key-badge">▼</span> : Drive Backward</li>
-                    <li><span class="key-badge">A</span> or <span class="key-badge">◀</span> : Turn Left</li>
-                    <li><span class="key-badge">D</span> or <span class="key-badge">▶</span> : Turn Right</li>
-                    <li><span class="key-badge">SPACE</span> : Honk Horn / Beep</li>
+                    <li><span class="key-badge">W</span> : Drive Forward</li>
+                    <li><span class="key-badge">S</span> : Drive Backward</li>
+                    <li><span class="key-badge">A</span> : Turn Left</li>
+                    <li><span class="key-badge">D</span> : Turn Right</li>
+                    <li><span class="key-badge">SPACE</span> : Honk Horn</li>
                 </ul>
             </div>
-            <div>
-                <h3 class="text-white text-sm uppercase tracking-widest border-b border-gray-700 pb-2 mb-4">Manipulator Arms (Servos)</h3>
+            <!-- Mode 2 -->
+             <div>
+                <h3 class="text-white text-sm uppercase tracking-widest border-b border-gray-700 pb-2 mb-4">L/R TANK MODE</h3>
                 <ul class="space-y-3">
-                    <li><span class="key-badge">U</span> / <span class="key-badge">7</span> : Open/Close Pin 13</li>
-                    <li><span class="key-badge">I</span> / <span class="key-badge">8</span> : Open/Close Pin 14</li>
-                    <li><span class="key-badge">O</span> / <span class="key-badge">9</span> : Open/Close Pin 15</li>
-                    <li><span class="key-badge">P</span> / <span class="key-badge">0</span> : Open/Close Pin 16</li>
+                    <li><span class="key-badge">1</span> : Left Motor Forward</li>
+                    <li><span class="key-badge">Q</span> : Left Motor Backward</li>
+                    <li><span class="key-badge">3</span> : Right Motor Forward</li>
+                    <li><span class="key-badge">E</span> : Right Motor Backward</li>
                 </ul>
+            </div>
+            
+            <!-- Manipulator -->
+            <div class="md:col-span-2">
+                <h3 class="text-white text-sm uppercase tracking-widest border-b border-gray-700 pb-2 mb-4">Manipulator Arms (Always Active)</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <ul class="space-y-3">
+                        <li><span class="key-badge">U</span> / <span class="key-badge">7</span> : Open/Close Pin 13</li>
+                        <li><span class="key-badge">I</span> / <span class="key-badge">8</span> : Open/Close Pin 14</li>
+                    </ul>
+                    <ul class="space-y-3">
+                        <li><span class="key-badge">O</span> / <span class="key-badge">9</span> : Open/Close Pin 15</li>
+                        <li><span class="key-badge">P</span> / <span class="key-badge">0</span> : Open/Close Pin 16</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -173,7 +195,6 @@
             You must flash the following MakeCode project to your device.
         </p>
         
-        <!-- Button Area -->
         <div class="text-center py-6 bg-green-900/20 border border-green-500/30 rounded-lg">
             <p class="mb-4 font-bold text-lg">REQUIRED MAKECODE PROJECT</p>
             <a href="https://makecode.microbit.org/S19102-28888-92943-62545" target="_blank" class="inline-block bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded transition-colors no-underline">
