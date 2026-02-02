@@ -211,6 +211,11 @@
             color: white;
             animation: pulse 1s infinite;
         }
+        .bind-key.success {
+            animation: flashGreen 0.5s ease-out;
+            background: var(--accent-green);
+            color: black;
+        }
         
         /* Slider Styling */
         input[type=range] {
@@ -243,6 +248,11 @@
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
+        
+        @keyframes flashGreen {
+            0% { background-color: white; transform: scale(1.1); }
+            100% { background-color: var(--accent-green); transform: scale(1); }
+        }
 
     </style>
 </head>
@@ -258,7 +268,7 @@
             </div>
             <div class="flex flex-col">
                 <h1 class="text-xl font-bold tracking-wider text-green-400 leading-none">MICRO:BIT<span class="text-white text-sm ml-2 opacity-70">CONTROL</span></h1>
-                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.4</span>
+                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.5</span>
             </div>
         </div>
         <div class="flex gap-2">
@@ -390,19 +400,19 @@
                 <!-- Headers with Editable Labels -->
                 <div class="flex flex-col items-center justify-end pb-2">
                     <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 13</div>
-                    <input type="text" value="SERVO 1" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400">
+                    <input type="text" id="label_servo_0" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400" oninput="saveServoLabel(0, this.value)">
                 </div>
                 <div class="flex flex-col items-center justify-end pb-2">
                     <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 14</div>
-                    <input type="text" value="SERVO 2" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400">
+                    <input type="text" id="label_servo_1" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400" oninput="saveServoLabel(1, this.value)">
                 </div>
                 <div class="flex flex-col items-center justify-end pb-2">
                     <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 15</div>
-                    <input type="text" value="SERVO 3" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400">
+                    <input type="text" id="label_servo_2" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400" oninput="saveServoLabel(2, this.value)">
                 </div>
                 <div class="flex flex-col items-center justify-end pb-2">
                     <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 16</div>
-                    <input type="text" value="SERVO 4" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400">
+                    <input type="text" id="label_servo_3" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400" oninput="saveServoLabel(3, this.value)">
                 </div>
 
                 <!-- Row 1: TOP (Keys 7,8,9,0) -> ADD/OPEN functionality -->
@@ -518,7 +528,7 @@
             'right_fwd': { key: '3', mode: 'TANK', label: 'Right Track Fwd', btnId: 'btnR_Fwd', cmd: 'rightforward' },
             'right_back': { key: 'e', mode: 'TANK', label: 'Right Track Back', btnId: 'btnR_Back', cmd: 'rightbackward' },
 
-            // SERVOS (Updated cmds to add/sub, keys flipped rows)
+            // SERVOS
             's1_add': { key: '7', mode: 'ALWAYS', label: 'Servo 1 Add', btnId: 's1_add', cmd: 'pin13add', servoIndex: 0 },
             's1_sub': { key: 'u', mode: 'ALWAYS', label: 'Servo 1 Sub', btnId: 's1_sub', cmd: 'pin13sub', servoIndex: 0 },
             
@@ -538,11 +548,14 @@
         // 2. Servo Sensitivity (Degrees step: 1, 2, 3, 5, 10, 15, 30)
         // Stored as index 0-6
         const sensitivityValues = [1, 2, 3, 5, 10, 15, 30];
-        const defaultServoConfig = [3, 3, 3, 3]; // Default index 3 = 5 degrees
+        // Default index 5 = 15 degrees
+        const defaultServoConfig = [5, 5, 5, 5]; 
+        const defaultServoLabels = ["SERVO 1", "SERVO 2", "SERVO 3", "SERVO 4"];
 
         // --- Global State ---
         let currentBindings = JSON.parse(localStorage.getItem('robotKeyConfigV3')) || JSON.parse(JSON.stringify(defaultBindings));
         let servoConfig = JSON.parse(localStorage.getItem('robotServoConfig')) || [...defaultServoConfig];
+        let servoLabels = JSON.parse(localStorage.getItem('robotServoLabels')) || [...defaultServoLabels];
         
         let keyLookup = {}; 
         let uBitDevice;
@@ -550,11 +563,13 @@
         let connected = false;
         let drivingMode = 'WASD'; 
         let remappingAction = null; 
+        let justBoundAction = null; // Track recently bound action for animation
 
         // --- Init ---
         function initSystem() {
             rebuildKeyLookup();
             updateUIKeys();
+            loadServoLabels(); // Set inputs on main UI
             renderSettingsModal();
         }
 
@@ -581,6 +596,7 @@
         function saveConfig() {
             localStorage.setItem('robotKeyConfigV3', JSON.stringify(currentBindings));
             localStorage.setItem('robotServoConfig', JSON.stringify(servoConfig));
+            localStorage.setItem('robotServoLabels', JSON.stringify(servoLabels));
             rebuildKeyLookup();
             updateUIKeys();
         }
@@ -588,8 +604,23 @@
         function resetToDefaults() {
             currentBindings = JSON.parse(JSON.stringify(defaultBindings));
             servoConfig = [...defaultServoConfig];
+            servoLabels = [...defaultServoLabels];
             saveConfig();
+            loadServoLabels(); // Reset UI inputs
             renderSettingsModal();
+        }
+
+        // --- Label Logic ---
+        function saveServoLabel(index, val) {
+            servoLabels[index] = val;
+            saveConfig();
+        }
+
+        function loadServoLabels() {
+            for(let i=0; i<4; i++) {
+                const input = document.getElementById(`label_servo_${i}`);
+                if(input) input.value = servoLabels[i];
+            }
         }
 
         // --- Settings Modal Logic ---
@@ -617,7 +648,8 @@
                 
                 const title = document.createElement('span');
                 title.className = "text-green-400 font-bold text-xs";
-                title.innerText = `SERVO ${i+1} (PIN ${13+i})`;
+                // USE CUSTOM LABEL
+                title.innerText = `${servoLabels[i]} (PIN ${13+i})`;
                 
                 const valDisplay = document.createElement('span');
                 valDisplay.className = "text-white font-mono text-xs";
@@ -672,13 +704,24 @@
                     label.innerText = config.label;
 
                     const btn = document.createElement('button');
-                    btn.className = `bind-key ${remappingAction === actionId ? 'recording' : ''}`;
+                    
+                    // Check if this button was just bound to animate it
+                    const isSuccess = justBoundAction === actionId;
+                    const isRecording = remappingAction === actionId;
+                    
+                    let btnClass = 'bind-key';
+                    if (isRecording) btnClass += ' recording';
+                    if (isSuccess) btnClass += ' success';
+                    
+                    btn.className = btnClass;
+                    
                     let displayKey = config.key.toUpperCase();
                     if (displayKey === ' ') displayKey = 'SPACE';
-                    btn.innerText = remappingAction === actionId ? 'PRESS KEY...' : displayKey;
+                    btn.innerText = isRecording ? 'PRESS KEY...' : displayKey;
                     
                     btn.onclick = () => {
                         remappingAction = actionId;
+                        justBoundAction = null; // Clear prev success state
                         renderSettingsModal(); 
                     };
 
@@ -686,6 +729,11 @@
                     row.appendChild(btn);
                     container.appendChild(row);
                 });
+            }
+            
+            // Clear the "just bound" state after render so it doesn't animate again on next refresh
+            if (justBoundAction) {
+                setTimeout(() => { justBoundAction = null; }, 500); 
             }
         }
 
@@ -830,8 +878,13 @@
                     return;
                 }
                 currentBindings[remappingAction].key = newKey;
+                
+                // Set success state for animation
+                justBoundAction = remappingAction;
                 remappingAction = null;
+                
                 saveConfig();
+                renderSettingsModal(); // Force re-render to show success/stop recording
                 return;
             }
 
