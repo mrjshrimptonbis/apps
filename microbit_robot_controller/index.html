@@ -94,6 +94,7 @@
         }
 
         /* Keyboard Key Styling for Servos */
+        /* Changed to work on DIVs instead of Buttons to allow nested inputs */
         .key-btn {
             background-color: #222;
             border: 1px solid #444;
@@ -107,6 +108,8 @@
             justify-content: center;
             height: 100%;
             min-height: 80px;
+            cursor: pointer; /* Ensure pointer cursor on div */
+            user-select: none; /* Prevent text selection on the container */
         }
 
         .key-btn:active, .key-btn.active {
@@ -122,6 +125,21 @@
              color: var(--connector-gold);
              border-color: var(--connector-gold);
              box-shadow: 0 0 10px rgba(231, 166, 0, 0.2);
+        }
+
+        /* Custom Input Styling for Editable Labels */
+        .editable-label {
+            background: transparent;
+            border: none;
+            text-align: center;
+            color: inherit;
+            width: 100%;
+            pointer-events: auto; /* Allow interaction */
+        }
+        .editable-label:focus {
+            outline: none;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 4px;
         }
 
         .led-dot {
@@ -163,7 +181,7 @@
             </div>
             <div class="flex flex-col">
                 <h1 class="text-xl font-bold tracking-wider text-green-400 leading-none">MICRO:BIT<span class="text-white text-sm ml-2 opacity-70">CONTROL</span></h1>
-                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.1</span>
+                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.2</span>
             </div>
         </div>
         <div class="flex gap-2">
@@ -287,68 +305,70 @@
             </div>
 
             <!-- Keyboard Layout Grid -->
+            <!-- Using DIVs instead of BUTTONs to allow nested Input fields -->
             <div class="grid grid-cols-4 gap-3 h-full pb-4 pt-2">
                 
-                <!-- Headers -->
+                <!-- Headers with Editable Labels -->
                 <div class="flex flex-col items-center justify-end pb-2">
                     <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 13</div>
-                    <div class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded">SERVO 1</div>
+                    <input type="text" value="SERVO 1" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400">
                 </div>
                 <div class="flex flex-col items-center justify-end pb-2">
                     <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 14</div>
-                    <div class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded">SERVO 2</div>
+                    <input type="text" value="SERVO 2" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400">
                 </div>
                 <div class="flex flex-col items-center justify-end pb-2">
                     <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 15</div>
-                    <div class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded">SERVO 3</div>
+                    <input type="text" value="SERVO 3" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400">
                 </div>
                 <div class="flex flex-col items-center justify-end pb-2">
                     <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 16</div>
-                    <div class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded">SERVO 4</div>
+                    <input type="text" value="SERVO 4" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400">
                 </div>
 
                 <!-- Row 1: CLOSE Controls (Number Keys 7-0) -->
-                <button id="s1_close" class="key-btn close-btn" data-cmd="pin13close">
+                <div id="s1_close" class="key-btn close-btn" data-cmd="pin13close">
                     <span class="text-2xl font-bold">7</span>
-                    <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
-                </button>
+                    <!-- Input stops propagation so typing doesn't trigger servo -->
+                    <input type="text" value="CLOSE" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
 
-                <button id="s2_close" class="key-btn close-btn" data-cmd="pin14close">
+                <div id="s2_close" class="key-btn close-btn" data-cmd="pin14close">
                     <span class="text-2xl font-bold">8</span>
-                    <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
-                </button>
+                    <input type="text" value="CLOSE" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
 
-                <button id="s3_close" class="key-btn close-btn" data-cmd="pin15close">
+                <div id="s3_close" class="key-btn close-btn" data-cmd="pin15close">
                     <span class="text-2xl font-bold">9</span>
-                    <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
-                </button>
+                    <input type="text" value="CLOSE" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
 
-                <button id="s4_close" class="key-btn close-btn" data-cmd="pin16close">
+                <div id="s4_close" class="key-btn close-btn" data-cmd="pin16close">
                     <span class="text-2xl font-bold">0</span>
-                    <span class="text-[9px] opacity-50 mt-1">CLOSE</span>
-                </button>
+                    <input type="text" value="CLOSE" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
 
 
                 <!-- Row 2: OPEN Controls (Letter Keys U-P) -->
-                <button id="s1_open" class="key-btn" data-cmd="pin13open">
+                <div id="s1_open" class="key-btn" data-cmd="pin13open">
                     <span class="text-2xl font-bold">U</span>
-                    <span class="text-[9px] opacity-50 mt-1">OPEN</span>
-                </button>
+                    <input type="text" value="OPEN" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
 
-                <button id="s2_open" class="key-btn" data-cmd="pin14open">
+                <div id="s2_open" class="key-btn" data-cmd="pin14open">
                     <span class="text-2xl font-bold">I</span>
-                    <span class="text-[9px] opacity-50 mt-1">OPEN</span>
-                </button>
+                    <input type="text" value="OPEN" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
 
-                <button id="s3_open" class="key-btn" data-cmd="pin15open">
+                <div id="s3_open" class="key-btn" data-cmd="pin15open">
                     <span class="text-2xl font-bold">O</span>
-                    <span class="text-[9px] opacity-50 mt-1">OPEN</span>
-                </button>
+                    <input type="text" value="OPEN" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
 
-                <button id="s4_open" class="key-btn" data-cmd="pin16open">
+                <div id="s4_open" class="key-btn" data-cmd="pin16open">
                     <span class="text-2xl font-bold">P</span>
-                    <span class="text-[9px] opacity-50 mt-1">OPEN</span>
-                </button>
+                    <input type="text" value="OPEN" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
 
             </div>
 
@@ -521,6 +541,10 @@
 
         document.addEventListener('keydown', (e) => {
             if (e.repeat) return; 
+
+            // Prevent typing in inputs from triggering keyboard shortcuts
+            if (e.target.tagName === 'INPUT') return;
+
             const key = e.key.toLowerCase();
 
             // 1. Check Servos (Always Active)
@@ -656,11 +680,16 @@
             if(!cmd) return;
 
             const start = (e) => {
+                // Ignore if clicking on an input field inside the button
+                if (e.target.tagName === 'INPUT') return;
+
                 if(e.cancelable) e.preventDefault();
                 btn.classList.add('active');
                 sendUART(cmd); 
             };
             const end = (e) => {
+                if (e.target.tagName === 'INPUT') return;
+                
                 if(e.cancelable) e.preventDefault();
                 btn.classList.remove('active');
             };
