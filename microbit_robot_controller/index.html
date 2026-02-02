@@ -258,7 +258,7 @@
             </div>
             <div class="flex flex-col">
                 <h1 class="text-xl font-bold tracking-wider text-green-400 leading-none">MICRO:BIT<span class="text-white text-sm ml-2 opacity-70">CONTROL</span></h1>
-                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.3</span>
+                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.4</span>
             </div>
         </div>
         <div class="flex gap-2">
@@ -428,22 +428,22 @@
 
 
                 <!-- Row 2: BOTTOM (Keys U,I,O,P) -> SUBTRACT/CLOSE functionality -->
-                <div id="s1_sub" class="key-btn close-btn" data-cmd="pin13subtract">
+                <div id="s1_sub" class="key-btn close-btn" data-cmd="pin13sub">
                     <span class="text-2xl font-bold display-key" data-action="s1_sub">U</span>
                     <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
-                <div id="s2_sub" class="key-btn close-btn" data-cmd="pin14subtract">
+                <div id="s2_sub" class="key-btn close-btn" data-cmd="pin14sub">
                     <span class="text-2xl font-bold display-key" data-action="s2_sub">I</span>
                     <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
-                <div id="s3_sub" class="key-btn close-btn" data-cmd="pin15subtract">
+                <div id="s3_sub" class="key-btn close-btn" data-cmd="pin15sub">
                     <span class="text-2xl font-bold display-key" data-action="s3_sub">O</span>
                     <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
-                <div id="s4_sub" class="key-btn close-btn" data-cmd="pin16subtract">
+                <div id="s4_sub" class="key-btn close-btn" data-cmd="pin16sub">
                     <span class="text-2xl font-bold display-key" data-action="s4_sub">P</span>
                     <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
@@ -518,18 +518,18 @@
             'right_fwd': { key: '3', mode: 'TANK', label: 'Right Track Fwd', btnId: 'btnR_Fwd', cmd: 'rightforward' },
             'right_back': { key: 'e', mode: 'TANK', label: 'Right Track Back', btnId: 'btnR_Back', cmd: 'rightbackward' },
 
-            // SERVOS (Updated cmds to add/subtract, keys flipped rows)
+            // SERVOS (Updated cmds to add/sub, keys flipped rows)
             's1_add': { key: '7', mode: 'ALWAYS', label: 'Servo 1 Add', btnId: 's1_add', cmd: 'pin13add', servoIndex: 0 },
-            's1_sub': { key: 'u', mode: 'ALWAYS', label: 'Servo 1 Sub', btnId: 's1_sub', cmd: 'pin13subtract', servoIndex: 0 },
+            's1_sub': { key: 'u', mode: 'ALWAYS', label: 'Servo 1 Sub', btnId: 's1_sub', cmd: 'pin13sub', servoIndex: 0 },
             
             's2_add': { key: '8', mode: 'ALWAYS', label: 'Servo 2 Add', btnId: 's2_add', cmd: 'pin14add', servoIndex: 1 },
-            's2_sub': { key: 'i', mode: 'ALWAYS', label: 'Servo 2 Sub', btnId: 's2_sub', cmd: 'pin14subtract', servoIndex: 1 },
+            's2_sub': { key: 'i', mode: 'ALWAYS', label: 'Servo 2 Sub', btnId: 's2_sub', cmd: 'pin14sub', servoIndex: 1 },
 
             's3_add': { key: '9', mode: 'ALWAYS', label: 'Servo 3 Add', btnId: 's3_add', cmd: 'pin15add', servoIndex: 2 },
-            's3_sub': { key: 'o', mode: 'ALWAYS', label: 'Servo 3 Sub', btnId: 's3_sub', cmd: 'pin15subtract', servoIndex: 2 },
+            's3_sub': { key: 'o', mode: 'ALWAYS', label: 'Servo 3 Sub', btnId: 's3_sub', cmd: 'pin15sub', servoIndex: 2 },
 
             's4_add': { key: '0', mode: 'ALWAYS', label: 'Servo 4 Add', btnId: 's4_add', cmd: 'pin16add', servoIndex: 3 },
-            's4_sub': { key: 'p', mode: 'ALWAYS', label: 'Servo 4 Sub', btnId: 's4_sub', cmd: 'pin16subtract', servoIndex: 3 },
+            's4_sub': { key: 'p', mode: 'ALWAYS', label: 'Servo 4 Sub', btnId: 's4_sub', cmd: 'pin16sub', servoIndex: 3 },
 
             // MISC
             'horn': { key: ' ', mode: 'ALWAYS', label: 'Horn', btnId: ['btnSpeaker', 'btnSpeakerTank'], cmd: 'beep' }
@@ -541,7 +541,7 @@
         const defaultServoConfig = [3, 3, 3, 3]; // Default index 3 = 5 degrees
 
         // --- Global State ---
-        let currentBindings = JSON.parse(localStorage.getItem('robotKeyConfigV2')) || JSON.parse(JSON.stringify(defaultBindings));
+        let currentBindings = JSON.parse(localStorage.getItem('robotKeyConfigV3')) || JSON.parse(JSON.stringify(defaultBindings));
         let servoConfig = JSON.parse(localStorage.getItem('robotServoConfig')) || [...defaultServoConfig];
         
         let keyLookup = {}; 
@@ -579,7 +579,7 @@
         }
 
         function saveConfig() {
-            localStorage.setItem('robotKeyConfigV2', JSON.stringify(currentBindings));
+            localStorage.setItem('robotKeyConfigV3', JSON.stringify(currentBindings));
             localStorage.setItem('robotServoConfig', JSON.stringify(servoConfig));
             rebuildKeyLookup();
             updateUIKeys();
