@@ -286,7 +286,7 @@
 
     </style>
 </head>
-<body class="flex flex-col h-screen max-h-screen">
+<body class="flex flex-col h-screen max-h-screen" onresize="resizeGrids()">
 
     <!-- Header -->
     <header class="p-4 flex justify-between items-center border-b border-gray-800 bg-black flex-none">
@@ -298,7 +298,7 @@
             </div>
             <div class="flex flex-col">
                 <h1 class="text-xl font-bold tracking-wider text-green-400 leading-none">MICRO:BIT<span class="text-white text-sm ml-2 opacity-70">CONTROL</span></h1>
-                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.7</span>
+                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.8</span>
             </div>
         </div>
         <div class="flex gap-2">
@@ -319,7 +319,7 @@
     <main class="flex-grow flex flex-col md:flex-row p-4 gap-6 items-stretch justify-center overflow-hidden">
 
         <!-- Left Column: Driving Controls -->
-        <div class="w-full md:w-1/2 flex flex-col bg-black rounded-xl border border-gray-800 shadow-2xl relative order-2 md:order-1 overflow-hidden">
+        <div id="leftColumn" class="w-full md:w-1/2 flex flex-col bg-black rounded-xl border border-gray-800 shadow-2xl relative order-2 md:order-1 overflow-hidden">
              
             <!-- Decorative Gold Line -->
              <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-b-xl opacity-80 z-10"></div>
@@ -331,42 +331,42 @@
             </div>
 
             <!-- Content Container -->
-            <div class="flex-grow relative p-6 flex items-center justify-center">
+            <!-- We give this an ID to calculate available space -->
+            <div id="driveContainer" class="flex-grow relative p-6 flex items-center justify-center overflow-hidden">
 
                 <!-- WASD Panel -->
-                <!-- CHANGED: Replaced w-full h-full with max-w-full max-h-full to prevent clipping on uneven aspect ratios -->
-                <div id="panelWASD" class="w-full h-full flex flex-col items-center justify-center transition-opacity duration-200 p-4">
-                    <div class="grid grid-cols-3 grid-rows-3 gap-3 max-w-full max-h-full aspect-square">
+                <div id="panelWASD" class="flex items-center justify-center transition-opacity duration-200">
+                    <div id="gridWASD" class="grid grid-cols-3 grid-rows-3 gap-3">
                         <!-- Top Row -->
                         <div></div>
-                        <button id="btnUp" class="dpad-btn rounded-t-lg flex flex-col items-center justify-center hover:bg-gray-800 h-full w-full">
+                        <button id="btnUp" class="dpad-btn rounded-t-lg flex flex-col items-center justify-center hover:bg-gray-800 w-full h-full">
                             <span class="text-2xl">▲</span>
                             <span class="text-[10px] opacity-50 display-key" data-action="forward">W</span>
                         </button>
                         <div></div>
                         
                         <!-- Middle Row -->
-                        <button id="btnLeft" class="dpad-btn rounded-l-lg flex flex-col items-center justify-center hover:bg-gray-800 h-full w-full">
+                        <button id="btnLeft" class="dpad-btn rounded-l-lg flex flex-col items-center justify-center hover:bg-gray-800 w-full h-full">
                             <span class="text-2xl">◀</span>
                             <span class="text-[10px] opacity-50 display-key" data-action="left">A</span>
                         </button>
                         
                         <!-- Center Speaker -->
-                        <div class="flex items-center justify-center h-full w-full">
+                        <div class="flex items-center justify-center w-full h-full">
                             <button id="btnSpeaker" class="speaker-btn w-full h-full flex flex-col items-center justify-center shadow-lg rounded-full aspect-square" title="Horn">
                                 <span class="text-xl">🔊</span>
                                 <span class="text-[8px] mt-1 opacity-70 display-key" data-action="horn">SPACE</span>
                             </button>
                         </div>
         
-                        <button id="btnRight" class="dpad-btn rounded-r-lg flex flex-col items-center justify-center hover:bg-gray-800 h-full w-full">
+                        <button id="btnRight" class="dpad-btn rounded-r-lg flex flex-col items-center justify-center hover:bg-gray-800 w-full h-full">
                             <span class="text-2xl">▶</span>
                             <span class="text-[10px] opacity-50 display-key" data-action="right">D</span>
                         </button>
                         
                         <!-- Bottom Row -->
                         <div></div>
-                        <button id="btnDown" class="dpad-btn rounded-b-lg flex flex-col items-center justify-center hover:bg-gray-800 h-full w-full">
+                        <button id="btnDown" class="dpad-btn rounded-b-lg flex flex-col items-center justify-center hover:bg-gray-800 w-full h-full">
                             <span class="text-2xl">▼</span>
                             <span class="text-[10px] opacity-50 display-key" data-action="backward">S</span>
                         </button>
@@ -375,20 +375,19 @@
                 </div>
 
                 <!-- Tank Panel (Hidden by default) -->
-                <!-- CHANGED: Replaced w-full h-full with max-w-full max-h-full -->
-                <div id="panelTank" class="hidden w-full h-full flex items-center justify-center transition-opacity duration-200 p-4">
-                    <div class="grid grid-cols-3 grid-rows-2 gap-3 max-w-full max-h-full aspect-[3/2]">
+                <div id="panelTank" class="hidden flex items-center justify-center transition-opacity duration-200">
+                    <div id="gridTank" class="grid grid-cols-3 grid-rows-2 gap-3">
                         
                         <!-- Left Track Buttons -->
-                        <button id="btnL_Fwd" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-1 row-start-1 h-full w-full" onmousedown="startTank('leftforward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftforward', this)" ontouchend="stopTank(this)">
+                        <button id="btnL_Fwd" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-1 row-start-1 w-full h-full" onmousedown="startTank('leftforward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftforward', this)" ontouchend="stopTank(this)">
                             ▲ <span class="text-[10px] opacity-50 display-key" data-action="left_fwd">1</span>
                         </button>
-                        <button id="btnL_Back" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-1 row-start-2 h-full w-full" onmousedown="startTank('leftbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftbackward', this)" ontouchend="stopTank(this)">
+                        <button id="btnL_Back" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-1 row-start-2 w-full h-full" onmousedown="startTank('leftbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftbackward', this)" ontouchend="stopTank(this)">
                             ▼ <span class="text-[10px] opacity-50 display-key" data-action="left_back">Q</span>
                         </button>
 
                         <!-- Center Speaker (Spans 2 rows vertically) -->
-                        <div class="col-start-2 row-start-1 row-span-2 flex items-center justify-center h-full w-full">
+                        <div class="col-start-2 row-start-1 row-span-2 flex items-center justify-center w-full h-full">
                             <button id="btnSpeakerTank" class="speaker-btn w-3/4 h-auto aspect-square flex flex-col items-center justify-center shadow-lg rounded-full" title="Horn">
                                 <span class="text-xl">🔊</span>
                                 <span class="text-[8px] mt-1 opacity-70 display-key" data-action="horn">SPACE</span>
@@ -396,10 +395,10 @@
                         </div>
 
                         <!-- Right Track Buttons -->
-                        <button id="btnR_Fwd" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-3 row-start-1 h-full w-full" onmousedown="startTank('rightforward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('rightforward', this)" ontouchend="stopTank(this)">
+                        <button id="btnR_Fwd" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-3 row-start-1 w-full h-full" onmousedown="startTank('rightforward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('rightforward', this)" ontouchend="stopTank(this)">
                             ▲ <span class="text-[10px] opacity-50 display-key" data-action="right_fwd">3</span>
                         </button>
-                        <button id="btnR_Back" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-3 row-start-2 h-full w-full" onmousedown="startTank('rightbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('rightbackward', this)" ontouchend="stopTank(this)">
+                        <button id="btnR_Back" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-3 row-start-2 w-full h-full" onmousedown="startTank('rightbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('rightbackward', this)" ontouchend="stopTank(this)">
                             ▼ <span class="text-[10px] opacity-50 display-key" data-action="right_back">E</span>
                         </button>
 
@@ -599,6 +598,48 @@
             updateUIKeys();
             loadServoLabels(); // Set inputs on main UI
             renderSettingsModal();
+            resizeGrids(); // Initial layout calc
+            window.addEventListener('resize', resizeGrids);
+        }
+
+        // --- Responsive Grid Sizing ---
+        function resizeGrids() {
+            const container = document.getElementById('driveContainer');
+            const wasdGrid = document.getElementById('gridWASD');
+            const tankGrid = document.getElementById('gridTank');
+            
+            if(!container) return;
+
+            // Get available space (subtract padding roughly)
+            const w = container.clientWidth - 48; // 24px padding on each side
+            const h = container.clientHeight - 48; 
+
+            // WASD: 3x3 (Aspect 1:1)
+            const sizeWASD = Math.min(w, h);
+            if(wasdGrid) {
+                wasdGrid.style.width = sizeWASD + 'px';
+                wasdGrid.style.height = sizeWASD + 'px';
+            }
+
+            // TANK: 3x2 (Aspect 1.5:1)
+            // If we fit to width: h = w / 1.5. Check if that fits height.
+            // If not, fit to height: w = h * 1.5.
+            let tankW, tankH;
+            
+            if (w / 1.5 <= h) {
+                // Width is the constraint
+                tankW = w;
+                tankH = w / 1.5;
+            } else {
+                // Height is the constraint
+                tankH = h;
+                tankW = h * 1.5;
+            }
+
+            if(tankGrid) {
+                tankGrid.style.width = tankW + 'px';
+                tankGrid.style.height = tankH + 'px';
+            }
         }
 
         function rebuildKeyLookup() {
@@ -900,12 +941,14 @@
                 panelWASD.classList.remove('hidden');
                 panelTank.classList.add('hidden');
                 log("> MODE: STANDARD WASD");
+                resizeGrids(); // Calc size for new panel
             } else {
                 tabWASD.classList.remove('active');
                 tabTank.classList.add('active');
                 panelWASD.classList.add('hidden');
                 panelTank.classList.remove('hidden');
                 log("> MODE: L/R TANK CONTROL");
+                resizeGrids(); // Calc size for new panel
             }
         }
 
@@ -919,37 +962,22 @@
         }
 
         // --- Command Processor ---
-        // Handles appending sensitivity for servo commands AND Inversion
         function processAndSendCommand(actionConfig) {
             let cmd = actionConfig.cmd;
-            
-            // Check if command is servo related (has servoIndex)
             if (typeof actionConfig.servoIndex !== 'undefined') {
                 const idx = actionConfig.servoIndex;
-                
-                // INVERT LOGIC
-                // Check if invert is on for this servo
                 if (servoInvert[idx]) {
-                    if (cmd.includes('add')) {
-                        cmd = cmd.replace('add', 'sub');
-                    } else if (cmd.includes('sub')) {
-                        cmd = cmd.replace('sub', 'add');
-                    }
+                    if (cmd.includes('add')) cmd = cmd.replace('add', 'sub');
+                    else if (cmd.includes('sub')) cmd = cmd.replace('sub', 'add');
                 }
-
-                // SENSITIVITY LOGIC
-                // Look up sensitivity
                 const sensitivityIndex = servoConfig[idx];
                 const sensitivity = sensitivityValues[sensitivityIndex];
-                // Append value e.g. 'pin13add' + '5'
                 cmd += sensitivity;
             }
-            
             sendUART(cmd);
         }
 
         // --- Global Input Handler ---
-
         document.addEventListener('keydown', (e) => {
             if (remappingAction) {
                 e.preventDefault();
@@ -960,13 +988,10 @@
                     return;
                 }
                 currentBindings[remappingAction].key = newKey;
-                
-                // Set success state for animation
                 justBoundAction = remappingAction;
                 remappingAction = null;
-                
                 saveConfig();
-                renderSettingsModal(); // Force re-render to show success/stop recording
+                renderSettingsModal();
                 return;
             }
 
@@ -980,13 +1005,11 @@
                 actions.forEach(action => {
                     if (action.mode === 'ALWAYS' || action.mode === drivingMode) {
                         e.preventDefault();
-                        
                         const btnIds = Array.isArray(action.btnId) ? action.btnId : [action.btnId];
                         btnIds.forEach(id => {
                             const btn = document.getElementById(id);
                             if (btn) btn.classList.add('active');
                         });
-
                         processAndSendCommand(action);
                     }
                 });
@@ -1002,16 +1025,13 @@
 
             if (actions) {
                 let stopSent = false;
-
                 actions.forEach(action => {
                     if (action.mode === 'ALWAYS' || action.mode === drivingMode) {
-                        
                         const btnIds = Array.isArray(action.btnId) ? action.btnId : [action.btnId];
                         btnIds.forEach(id => {
                             const btn = document.getElementById(id);
                             if (btn) btn.classList.remove('active');
                         });
-
                         if (!stopSent && (action.mode === 'WASD' || action.mode === 'TANK')) {
                             sendUART("stop");
                             stopSent = true; 
@@ -1021,11 +1041,10 @@
             }
         });
 
-        // --- Mouse/Touch Logic for Buttons (Standard non-tank buttons) ---
+        // --- Mouse/Touch Logic for Buttons ---
         const setupButton = (btnId, cmdStart, cmdEnd) => {
             const btn = document.getElementById(btnId);
             if (!btn) return;
-
             const start = (e) => {
                 if (e.target.tagName === 'INPUT') return;
                 if(e.cancelable) e.preventDefault();
@@ -1038,7 +1057,6 @@
                 btn.classList.remove('active');
                 if (cmdEnd) sendUART(cmdEnd);
             };
-
             btn.addEventListener('mousedown', start);
             btn.addEventListener('mouseup', end);
             btn.addEventListener('mouseleave', end);
@@ -1057,20 +1075,14 @@
         document.querySelectorAll('.key-btn').forEach(btn => {
             const rawCmd = btn.getAttribute('data-cmd');
             if(!rawCmd) return;
-
-            // Determine which servo this is based on cmd string (pin13... = index 0)
             let servoIdx = 0;
             if (rawCmd.includes('pin14')) servoIdx = 1;
             if (rawCmd.includes('pin15')) servoIdx = 2;
             if (rawCmd.includes('pin16')) servoIdx = 3;
-
             const start = (e) => {
                 if (e.target.tagName === 'INPUT') return;
                 if(e.cancelable) e.preventDefault();
                 btn.classList.add('active');
-                
-                // Manually construct the action config to use processAndSendCommand
-                // This ensures clicks obey inversion rules too!
                 const config = { cmd: rawCmd, servoIndex: servoIdx };
                 processAndSendCommand(config);
             };
@@ -1079,7 +1091,6 @@
                 if(e.cancelable) e.preventDefault();
                 btn.classList.remove('active');
             };
-
             btn.addEventListener('mousedown', start);
             btn.addEventListener('mouseup', end);
             btn.addEventListener('mouseleave', end);
@@ -1087,7 +1098,6 @@
             btn.addEventListener('touchend', end);
         });
 
-        // Initialize System
         initSystem();
 
     </script>
