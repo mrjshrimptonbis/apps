@@ -211,6 +211,33 @@
             color: white;
             animation: pulse 1s infinite;
         }
+        
+        /* Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            cursor: pointer;
+            margin-top: -6px; 
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #333;
+            border-radius: 2px;
+        }
+
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -231,11 +258,11 @@
             </div>
             <div class="flex flex-col">
                 <h1 class="text-xl font-bold tracking-wider text-green-400 leading-none">MICRO:BIT<span class="text-white text-sm ml-2 opacity-70">CONTROL</span></h1>
-                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.2</span>
+                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.3</span>
             </div>
         </div>
         <div class="flex gap-2">
-            <button id="settingsBtn" class="icon-btn" title="Key Bindings">
+            <button id="settingsBtn" class="icon-btn" title="Settings & Key Bindings">
                 ⚙️
             </button>
             <a href="help.html" class="icon-btn no-underline font-bold" title="Help">
@@ -378,47 +405,47 @@
                     <input type="text" value="SERVO 4" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400">
                 </div>
 
-                <!-- Row 1: CLOSE Controls -->
-                <div id="s1_close" class="key-btn close-btn" data-cmd="pin13close">
-                    <span class="text-2xl font-bold display-key" data-action="s1_close">7</span>
-                    <input type="text" value="CLOSE" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                <!-- Row 1: TOP (Keys 7,8,9,0) -> ADD/OPEN functionality -->
+                <div id="s1_add" class="key-btn" data-cmd="pin13add">
+                    <span class="text-2xl font-bold display-key" data-action="s1_add">7</span>
+                    <input type="text" value="ADD" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
-                <div id="s2_close" class="key-btn close-btn" data-cmd="pin14close">
-                    <span class="text-2xl font-bold display-key" data-action="s2_close">8</span>
-                    <input type="text" value="CLOSE" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                <div id="s2_add" class="key-btn" data-cmd="pin14add">
+                    <span class="text-2xl font-bold display-key" data-action="s2_add">8</span>
+                    <input type="text" value="ADD" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
-                <div id="s3_close" class="key-btn close-btn" data-cmd="pin15close">
-                    <span class="text-2xl font-bold display-key" data-action="s3_close">9</span>
-                    <input type="text" value="CLOSE" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                <div id="s3_add" class="key-btn" data-cmd="pin15add">
+                    <span class="text-2xl font-bold display-key" data-action="s3_add">9</span>
+                    <input type="text" value="ADD" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
-                <div id="s4_close" class="key-btn close-btn" data-cmd="pin16close">
-                    <span class="text-2xl font-bold display-key" data-action="s4_close">0</span>
-                    <input type="text" value="CLOSE" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                <div id="s4_add" class="key-btn" data-cmd="pin16add">
+                    <span class="text-2xl font-bold display-key" data-action="s4_add">0</span>
+                    <input type="text" value="ADD" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
 
-                <!-- Row 2: OPEN Controls -->
-                <div id="s1_open" class="key-btn" data-cmd="pin13open">
-                    <span class="text-2xl font-bold display-key" data-action="s1_open">U</span>
-                    <input type="text" value="OPEN" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                <!-- Row 2: BOTTOM (Keys U,I,O,P) -> SUBTRACT/CLOSE functionality -->
+                <div id="s1_sub" class="key-btn close-btn" data-cmd="pin13subtract">
+                    <span class="text-2xl font-bold display-key" data-action="s1_sub">U</span>
+                    <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
-                <div id="s2_open" class="key-btn" data-cmd="pin14open">
-                    <span class="text-2xl font-bold display-key" data-action="s2_open">I</span>
-                    <input type="text" value="OPEN" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                <div id="s2_sub" class="key-btn close-btn" data-cmd="pin14subtract">
+                    <span class="text-2xl font-bold display-key" data-action="s2_sub">I</span>
+                    <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
-                <div id="s3_open" class="key-btn" data-cmd="pin15open">
-                    <span class="text-2xl font-bold display-key" data-action="s3_open">O</span>
-                    <input type="text" value="OPEN" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                <div id="s3_sub" class="key-btn close-btn" data-cmd="pin15subtract">
+                    <span class="text-2xl font-bold display-key" data-action="s3_sub">O</span>
+                    <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
-                <div id="s4_open" class="key-btn" data-cmd="pin16open">
-                    <span class="text-2xl font-bold display-key" data-action="s4_open">P</span>
-                    <input type="text" value="OPEN" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                <div id="s4_sub" class="key-btn close-btn" data-cmd="pin16subtract">
+                    <span class="text-2xl font-bold display-key" data-action="s4_sub">P</span>
+                    <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
                 </div>
 
             </div>
@@ -436,12 +463,29 @@
     <div id="settingsModal" class="fixed inset-0 modal-overlay hidden z-50 flex items-center justify-center p-4">
         <div class="bg-[#111] border border-gray-700 rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl">
             <div class="p-4 border-b border-gray-800 flex justify-between items-center">
-                <h2 class="text-xl font-bold text-green-400 tracking-wider">KEY BINDINGS</h2>
+                <h2 class="text-xl font-bold text-green-400 tracking-wider">SETTINGS</h2>
                 <button id="closeSettings" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
             </div>
             
-            <div class="p-6 overflow-y-auto" id="bindingsList">
-                <!-- Dynamically Populated via JS -->
+            <div class="p-6 overflow-y-auto" id="settingsContent">
+                
+                <!-- SERVO SENSITIVITY SECTION -->
+                <div class="mb-8">
+                    <h3 class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4">SERVO SENSITIVITY (Degrees Step)</h3>
+                    
+                    <div id="servoSlidersContainer">
+                        <!-- Sliders generated by JS -->
+                    </div>
+                </div>
+
+                <!-- KEY BINDINGS SECTION -->
+                <div>
+                    <h3 class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4">KEY BINDINGS</h3>
+                    <div id="bindingsList">
+                        <!-- Key bindings generated by JS -->
+                    </div>
+                </div>
+
             </div>
 
             <div class="p-4 border-t border-gray-800 flex justify-end gap-4">
@@ -458,7 +502,9 @@
         const UART_TX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
         const UART_RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 
-        // --- Key Mapping Configuration ---
+        // --- Config Objects ---
+        
+        // 1. Key Mappings
         const defaultBindings = {
             // WASD
             'forward': { key: 'w', mode: 'WASD', label: 'Drive Forward', btnId: 'btnUp', cmd: 'forward' },
@@ -472,42 +518,44 @@
             'right_fwd': { key: '3', mode: 'TANK', label: 'Right Track Fwd', btnId: 'btnR_Fwd', cmd: 'rightforward' },
             'right_back': { key: 'e', mode: 'TANK', label: 'Right Track Back', btnId: 'btnR_Back', cmd: 'rightbackward' },
 
-            // SERVOS
-            's1_open': { key: 'u', mode: 'ALWAYS', label: 'Servo 1 Open', btnId: 's1_open', cmd: 'pin13open' },
-            's1_close': { key: '7', mode: 'ALWAYS', label: 'Servo 1 Close', btnId: 's1_close', cmd: 'pin13close' },
+            // SERVOS (Updated cmds to add/subtract, keys flipped rows)
+            's1_add': { key: '7', mode: 'ALWAYS', label: 'Servo 1 Add', btnId: 's1_add', cmd: 'pin13add', servoIndex: 0 },
+            's1_sub': { key: 'u', mode: 'ALWAYS', label: 'Servo 1 Sub', btnId: 's1_sub', cmd: 'pin13subtract', servoIndex: 0 },
             
-            's2_open': { key: 'i', mode: 'ALWAYS', label: 'Servo 2 Open', btnId: 's2_open', cmd: 'pin14open' },
-            's2_close': { key: '8', mode: 'ALWAYS', label: 'Servo 2 Close', btnId: 's2_close', cmd: 'pin14close' },
+            's2_add': { key: '8', mode: 'ALWAYS', label: 'Servo 2 Add', btnId: 's2_add', cmd: 'pin14add', servoIndex: 1 },
+            's2_sub': { key: 'i', mode: 'ALWAYS', label: 'Servo 2 Sub', btnId: 's2_sub', cmd: 'pin14subtract', servoIndex: 1 },
 
-            's3_open': { key: 'o', mode: 'ALWAYS', label: 'Servo 3 Open', btnId: 's3_open', cmd: 'pin15open' },
-            's3_close': { key: '9', mode: 'ALWAYS', label: 'Servo 3 Close', btnId: 's3_close', cmd: 'pin15close' },
+            's3_add': { key: '9', mode: 'ALWAYS', label: 'Servo 3 Add', btnId: 's3_add', cmd: 'pin15add', servoIndex: 2 },
+            's3_sub': { key: 'o', mode: 'ALWAYS', label: 'Servo 3 Sub', btnId: 's3_sub', cmd: 'pin15subtract', servoIndex: 2 },
 
-            's4_open': { key: 'p', mode: 'ALWAYS', label: 'Servo 4 Open', btnId: 's4_open', cmd: 'pin16open' },
-            's4_close': { key: '0', mode: 'ALWAYS', label: 'Servo 4 Close', btnId: 's4_close', cmd: 'pin16close' },
+            's4_add': { key: '0', mode: 'ALWAYS', label: 'Servo 4 Add', btnId: 's4_add', cmd: 'pin16add', servoIndex: 3 },
+            's4_sub': { key: 'p', mode: 'ALWAYS', label: 'Servo 4 Sub', btnId: 's4_sub', cmd: 'pin16subtract', servoIndex: 3 },
 
             // MISC
             'horn': { key: ' ', mode: 'ALWAYS', label: 'Horn', btnId: ['btnSpeaker', 'btnSpeakerTank'], cmd: 'beep' }
         };
 
-        let currentBindings = JSON.parse(localStorage.getItem('robotKeyConfig')) || JSON.parse(JSON.stringify(defaultBindings));
-        let keyLookup = {}; // Maps key char to action object
+        // 2. Servo Sensitivity (Degrees step: 1, 2, 3, 5, 10, 15, 30)
+        // Stored as index 0-6
+        const sensitivityValues = [1, 2, 3, 5, 10, 15, 30];
+        const defaultServoConfig = [3, 3, 3, 3]; // Default index 3 = 5 degrees
 
-        // --- State ---
+        // --- Global State ---
+        let currentBindings = JSON.parse(localStorage.getItem('robotKeyConfigV2')) || JSON.parse(JSON.stringify(defaultBindings));
+        let servoConfig = JSON.parse(localStorage.getItem('robotServoConfig')) || [...defaultServoConfig];
+        
+        let keyLookup = {}; 
         let uBitDevice;
         let rxCharacteristic;
         let connected = false;
-        let drivingMode = 'WASD'; // 'WASD' or 'TANK'
-        let remappingAction = null; // The action ID currently being remapped
+        let drivingMode = 'WASD'; 
+        let remappingAction = null; 
 
-        // --- UI Elements ---
-        const connectBtn = document.getElementById('connectBtn');
-        const statusLog = document.getElementById('statusLog');
-        const settingsModal = document.getElementById('settingsModal');
-        
         // --- Init ---
-        function initKeySystem() {
+        function initSystem() {
             rebuildKeyLookup();
             updateUIKeys();
+            renderSettingsModal();
         }
 
         function rebuildKeyLookup() {
@@ -520,7 +568,6 @@
         }
 
         function updateUIKeys() {
-            // Update the display text on the main controller buttons
             document.querySelectorAll('.display-key').forEach(el => {
                 const action = el.getAttribute('data-action');
                 if (action && currentBindings[action]) {
@@ -531,37 +578,79 @@
             });
         }
 
-        function saveBindings() {
-            localStorage.setItem('robotKeyConfig', JSON.stringify(currentBindings));
+        function saveConfig() {
+            localStorage.setItem('robotKeyConfigV2', JSON.stringify(currentBindings));
+            localStorage.setItem('robotServoConfig', JSON.stringify(servoConfig));
             rebuildKeyLookup();
             updateUIKeys();
-            renderSettingsModal(); // Refresh modal if open
         }
 
         function resetToDefaults() {
             currentBindings = JSON.parse(JSON.stringify(defaultBindings));
-            saveBindings();
+            servoConfig = [...defaultServoConfig];
+            saveConfig();
+            renderSettingsModal();
         }
 
         // --- Settings Modal Logic ---
         document.getElementById('settingsBtn').addEventListener('click', () => {
             renderSettingsModal();
-            settingsModal.classList.remove('hidden');
+            document.getElementById('settingsModal').classList.remove('hidden');
         });
 
         document.getElementById('closeSettings').addEventListener('click', () => {
-            settingsModal.classList.add('hidden');
+            document.getElementById('settingsModal').classList.add('hidden');
             remappingAction = null;
         });
 
         function renderSettingsModal() {
+            // 1. Render Sliders
+            const slidersContainer = document.getElementById('servoSlidersContainer');
+            slidersContainer.innerHTML = '';
+            
+            for(let i=0; i<4; i++) {
+                const row = document.createElement('div');
+                row.className = "mb-4 bg-white/5 p-3 rounded border border-white/10";
+                
+                const header = document.createElement('div');
+                header.className = "flex justify-between mb-2";
+                
+                const title = document.createElement('span');
+                title.className = "text-green-400 font-bold text-xs";
+                title.innerText = `SERVO ${i+1} (PIN ${13+i})`;
+                
+                const valDisplay = document.createElement('span');
+                valDisplay.className = "text-white font-mono text-xs";
+                valDisplay.innerText = sensitivityValues[servoConfig[i]] + "°";
+                
+                header.appendChild(title);
+                header.appendChild(valDisplay);
+                
+                const slider = document.createElement('input');
+                slider.type = "range";
+                slider.min = 0;
+                slider.max = 6;
+                slider.step = 1;
+                slider.value = servoConfig[i];
+                slider.oninput = (e) => {
+                    servoConfig[i] = parseInt(e.target.value);
+                    valDisplay.innerText = sensitivityValues[servoConfig[i]] + "°";
+                    saveConfig();
+                };
+
+                row.appendChild(header);
+                row.appendChild(slider);
+                slidersContainer.appendChild(row);
+            }
+
+            // 2. Render Key Bindings
             const container = document.getElementById('bindingsList');
             container.innerHTML = '';
 
             const groups = {
                 'Driving (WASD)': ['forward', 'backward', 'left', 'right'],
                 'Driving (Tank)': ['left_fwd', 'left_back', 'right_fwd', 'right_back'],
-                'Manipulator Arms': ['s1_open', 's1_close', 's2_open', 's2_close', 's3_open', 's3_close', 's4_open', 's4_close'],
+                'Manipulator Arms': ['s1_add', 's1_sub', 's2_add', 's2_sub', 's3_add', 's3_sub', 's4_add', 's4_sub'],
                 'Misc': ['horn']
             };
 
@@ -573,6 +662,8 @@
 
                 actions.forEach(actionId => {
                     const config = currentBindings[actionId];
+                    if(!config) return; 
+
                     const row = document.createElement('div');
                     row.className = 'bind-row';
                     
@@ -588,7 +679,7 @@
                     
                     btn.onclick = () => {
                         remappingAction = actionId;
-                        renderSettingsModal(); // Update to show "Press Key"
+                        renderSettingsModal(); 
                     };
 
                     row.appendChild(label);
@@ -710,24 +801,37 @@
             sendUART('stop');
         }
 
+        // --- Command Processor ---
+        // Handles appending sensitivity for servo commands
+        function processAndSendCommand(actionConfig) {
+            let cmd = actionConfig.cmd;
+            
+            // Check if command is servo related (has servoIndex)
+            if (typeof actionConfig.servoIndex !== 'undefined') {
+                // Look up sensitivity
+                const sensitivityIndex = servoConfig[actionConfig.servoIndex];
+                const sensitivity = sensitivityValues[sensitivityIndex];
+                // Append value e.g. 'pin13add' + '5'
+                cmd += sensitivity;
+            }
+            
+            sendUART(cmd);
+        }
+
         // --- Global Input Handler ---
 
         document.addEventListener('keydown', (e) => {
-            // 1. Handle Remapping Mode
             if (remappingAction) {
                 e.preventDefault();
                 const newKey = e.key.toLowerCase();
-                
-                // Validate key (optional: prevent 'Escape' from binding if used to close)
                 if (newKey === 'escape') {
                     remappingAction = null;
                     renderSettingsModal();
                     return;
                 }
-
                 currentBindings[remappingAction].key = newKey;
-                remappingAction = null; // Exit recording mode
-                saveBindings();
+                remappingAction = null;
+                saveConfig();
                 return;
             }
 
@@ -739,26 +843,22 @@
 
             if (actions) {
                 actions.forEach(action => {
-                    // Check Mode Validity
                     if (action.mode === 'ALWAYS' || action.mode === drivingMode) {
-                        e.preventDefault(); // Prevent scrolling for bound keys
+                        e.preventDefault();
                         
-                        // Visual Feedback
                         const btnIds = Array.isArray(action.btnId) ? action.btnId : [action.btnId];
                         btnIds.forEach(id => {
                             const btn = document.getElementById(id);
                             if (btn) btn.classList.add('active');
                         });
 
-                        // Send Command
-                        sendUART(action.cmd);
+                        processAndSendCommand(action);
                     }
                 });
             }
         });
 
         document.addEventListener('keyup', (e) => {
-            // Ignore keyup during remapping
             if (remappingAction) return;
             if (e.target.tagName === 'INPUT') return;
 
@@ -771,14 +871,12 @@
                 actions.forEach(action => {
                     if (action.mode === 'ALWAYS' || action.mode === drivingMode) {
                         
-                        // Remove Visual Feedback
                         const btnIds = Array.isArray(action.btnId) ? action.btnId : [action.btnId];
                         btnIds.forEach(id => {
                             const btn = document.getElementById(id);
                             if (btn) btn.classList.remove('active');
                         });
 
-                        // Send Stop if it's a driving command
                         if (!stopSent && (action.mode === 'WASD' || action.mode === 'TANK')) {
                             sendUART("stop");
                             stopSent = true; 
@@ -794,7 +892,7 @@
             if (!btn) return;
 
             const start = (e) => {
-                if (e.target.tagName === 'INPUT') return; // Ignore input clicks
+                if (e.target.tagName === 'INPUT') return;
                 if(e.cancelable) e.preventDefault();
                 btn.classList.add('active');
                 if (cmdStart) sendUART(cmdStart);
@@ -813,7 +911,6 @@
             btn.addEventListener('touchend', end);
         };
 
-        // We only need to setup the non-inline buttons here (WASD + Speaker)
         setupButton('btnUp', "forward", "stop");
         setupButton('btnDown', "backward", "stop");
         setupButton('btnLeft', "left", "stop");
@@ -821,17 +918,25 @@
         setupButton('btnSpeaker', "beep", null);
         setupButton('btnSpeakerTank', "beep", null);
 
-        // Servos are handled via class selector at bottom, Tank via inline attributes.
-        // But we need to update the servo logic to respect the input field protection.
+        // --- Touch/Mouse Logic for Servo Buttons ---
         document.querySelectorAll('.key-btn').forEach(btn => {
-            const cmd = btn.getAttribute('data-cmd');
-            if(!cmd) return;
+            const rawCmd = btn.getAttribute('data-cmd');
+            if(!rawCmd) return;
+
+            // Determine which servo this is based on cmd string (pin13... = index 0)
+            let servoIdx = 0;
+            if (rawCmd.includes('pin14')) servoIdx = 1;
+            if (rawCmd.includes('pin15')) servoIdx = 2;
+            if (rawCmd.includes('pin16')) servoIdx = 3;
 
             const start = (e) => {
                 if (e.target.tagName === 'INPUT') return;
                 if(e.cancelable) e.preventDefault();
                 btn.classList.add('active');
-                sendUART(cmd); 
+                
+                // Calculate dynamic command
+                const val = sensitivityValues[servoConfig[servoIdx]];
+                sendUART(rawCmd + val); 
             };
             const end = (e) => {
                 if (e.target.tagName === 'INPUT') return;
@@ -847,7 +952,7 @@
         });
 
         // Initialize System
-        initKeySystem();
+        initSystem();
 
     </script>
 </body>
