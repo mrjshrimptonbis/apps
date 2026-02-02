@@ -217,7 +217,7 @@
             color: black;
         }
         
-        /* Slider & Toggle Styling */
+        /* Slider Styling */
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
@@ -298,7 +298,7 @@
             </div>
             <div class="flex flex-col">
                 <h1 class="text-xl font-bold tracking-wider text-green-400 leading-none">MICRO:BIT<span class="text-white text-sm ml-2 opacity-70">CONTROL</span></h1>
-                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.6</span>
+                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.7</span>
             </div>
         </div>
         <div class="flex gap-2">
@@ -334,38 +334,39 @@
             <div class="flex-grow relative p-6 flex items-center justify-center">
 
                 <!-- WASD Panel -->
-                <div id="panelWASD" class="w-full h-full flex flex-col items-center justify-center transition-opacity duration-200">
-                    <div class="grid grid-cols-3 grid-rows-3 gap-3 w-full max-w-[400px] aspect-square">
+                <!-- CHANGED: Using max-w-full and max-h-full with aspect-square to ensure square scaling -->
+                <div id="panelWASD" class="w-full h-full flex flex-col items-center justify-center transition-opacity duration-200 p-4">
+                    <div class="grid grid-cols-3 grid-rows-3 gap-3 w-full h-full aspect-square max-w-[min(100%,100vh)] max-h-[min(100%,100vw)]">
                         <!-- Top Row -->
                         <div></div>
-                        <button id="btnUp" class="dpad-btn rounded-t-lg flex flex-col items-center justify-center hover:bg-gray-800">
+                        <button id="btnUp" class="dpad-btn rounded-t-lg flex flex-col items-center justify-center hover:bg-gray-800 h-full w-full">
                             <span class="text-2xl">▲</span>
                             <span class="text-[10px] opacity-50 display-key" data-action="forward">W</span>
                         </button>
                         <div></div>
                         
                         <!-- Middle Row -->
-                        <button id="btnLeft" class="dpad-btn rounded-l-lg flex flex-col items-center justify-center hover:bg-gray-800">
+                        <button id="btnLeft" class="dpad-btn rounded-l-lg flex flex-col items-center justify-center hover:bg-gray-800 h-full w-full">
                             <span class="text-2xl">◀</span>
                             <span class="text-[10px] opacity-50 display-key" data-action="left">A</span>
                         </button>
                         
                         <!-- Center Speaker -->
-                        <div class="flex items-center justify-center">
-                            <button id="btnSpeaker" class="speaker-btn w-16 h-16 flex flex-col items-center justify-center shadow-lg" title="Horn">
+                        <div class="flex items-center justify-center h-full w-full">
+                            <button id="btnSpeaker" class="speaker-btn w-full h-full flex flex-col items-center justify-center shadow-lg rounded-full aspect-square" title="Horn">
                                 <span class="text-xl">🔊</span>
                                 <span class="text-[8px] mt-1 opacity-70 display-key" data-action="horn">SPACE</span>
                             </button>
                         </div>
         
-                        <button id="btnRight" class="dpad-btn rounded-r-lg flex flex-col items-center justify-center hover:bg-gray-800">
+                        <button id="btnRight" class="dpad-btn rounded-r-lg flex flex-col items-center justify-center hover:bg-gray-800 h-full w-full">
                             <span class="text-2xl">▶</span>
                             <span class="text-[10px] opacity-50 display-key" data-action="right">D</span>
                         </button>
                         
                         <!-- Bottom Row -->
                         <div></div>
-                        <button id="btnDown" class="dpad-btn rounded-b-lg flex flex-col items-center justify-center hover:bg-gray-800">
+                        <button id="btnDown" class="dpad-btn rounded-b-lg flex flex-col items-center justify-center hover:bg-gray-800 h-full w-full">
                             <span class="text-2xl">▼</span>
                             <span class="text-[10px] opacity-50 display-key" data-action="backward">S</span>
                         </button>
@@ -374,38 +375,35 @@
                 </div>
 
                 <!-- Tank Panel (Hidden by default) -->
-                <div id="panelTank" class="hidden w-full h-full flex items-center justify-center gap-4 max-w-[400px]">
-                    
-                    <!-- Left Track -->
-                    <div class="flex-1 h-full flex flex-col gap-2">
-                        <div class="text-center text-[10px] text-gray-500 font-mono tracking-widest">LEFT MOTOR</div>
-                        <button id="btnL_Fwd" class="dpad-btn flex-1 rounded-t-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl" onmousedown="startTank('leftforward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftforward', this)" ontouchend="stopTank(this)">
+                <!-- CHANGED: 3x2 Grid with aspect-[3/2] to ensure square buttons -->
+                <div id="panelTank" class="hidden w-full h-full flex items-center justify-center transition-opacity duration-200 p-4">
+                    <div class="grid grid-cols-3 grid-rows-2 gap-3 w-full h-full aspect-[3/2] max-w-[min(100%,100vh)] max-h-[min(100%,100vw)]">
+                        
+                        <!-- Left Track Buttons -->
+                        <button id="btnL_Fwd" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-1 row-start-1 h-full w-full" onmousedown="startTank('leftforward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftforward', this)" ontouchend="stopTank(this)">
                             ▲ <span class="text-[10px] opacity-50 display-key" data-action="left_fwd">1</span>
                         </button>
-                        <button id="btnL_Back" class="dpad-btn flex-1 rounded-b-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl" onmousedown="startTank('leftbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftbackward', this)" ontouchend="stopTank(this)">
+                        <button id="btnL_Back" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-1 row-start-2 h-full w-full" onmousedown="startTank('leftbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftbackward', this)" ontouchend="stopTank(this)">
                             ▼ <span class="text-[10px] opacity-50 display-key" data-action="left_back">Q</span>
                         </button>
-                    </div>
 
-                    <!-- Center Speaker (Tank) -->
-                    <div class="flex items-center justify-center">
-                        <button id="btnSpeakerTank" class="speaker-btn w-16 h-16 flex flex-col items-center justify-center shadow-lg" title="Horn">
-                            <span class="text-xl">🔊</span>
-                            <span class="text-[8px] mt-1 opacity-70 display-key" data-action="horn">SPACE</span>
-                        </button>
-                    </div>
+                        <!-- Center Speaker (Spans 2 rows vertically) -->
+                        <div class="col-start-2 row-start-1 row-span-2 flex items-center justify-center h-full w-full">
+                            <button id="btnSpeakerTank" class="speaker-btn w-3/4 h-auto aspect-square flex flex-col items-center justify-center shadow-lg rounded-full" title="Horn">
+                                <span class="text-xl">🔊</span>
+                                <span class="text-[8px] mt-1 opacity-70 display-key" data-action="horn">SPACE</span>
+                            </button>
+                        </div>
 
-                    <!-- Right Track -->
-                    <div class="flex-1 h-full flex flex-col gap-2">
-                        <div class="text-center text-[10px] text-gray-500 font-mono tracking-widest">RIGHT MOTOR</div>
-                        <button id="btnR_Fwd" class="dpad-btn flex-1 rounded-t-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl" onmousedown="startTank('rightforward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('rightforward', this)" ontouchend="stopTank(this)">
+                        <!-- Right Track Buttons -->
+                        <button id="btnR_Fwd" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-3 row-start-1 h-full w-full" onmousedown="startTank('rightforward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('rightforward', this)" ontouchend="stopTank(this)">
                             ▲ <span class="text-[10px] opacity-50 display-key" data-action="right_fwd">3</span>
                         </button>
-                        <button id="btnR_Back" class="dpad-btn flex-1 rounded-b-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl" onmousedown="startTank('rightbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('rightbackward', this)" ontouchend="stopTank(this)">
+                        <button id="btnR_Back" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-3 row-start-2 h-full w-full" onmousedown="startTank('rightbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('rightbackward', this)" ontouchend="stopTank(this)">
                             ▼ <span class="text-[10px] opacity-50 display-key" data-action="right_back">E</span>
                         </button>
-                    </div>
 
+                    </div>
                 </div>
 
             </div>
@@ -511,7 +509,7 @@
                 
                 <!-- SERVO SENSITIVITY SECTION -->
                 <div class="mb-8">
-                    <h3 class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4">SERVO SENSITIVITY & DIRECTION</h3>
+                    <h3 class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4">SERVO SENSITIVITY (Degrees Step)</h3>
                     
                     <div id="servoSlidersContainer">
                         <!-- Sliders generated by JS -->
