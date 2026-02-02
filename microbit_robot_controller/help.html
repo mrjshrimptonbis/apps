@@ -126,8 +126,8 @@
                 <h3 class="text-white text-lg">Driving Motors (360° Servos)</h3>
                 <p class="text-gray-400 text-sm mb-2">Connect your continuous rotation servos to the primary motor pins defined in the MakeCode project.</p>
                 <ul class="list-disc ml-5 space-y-2 text-gray-300">
-                    <li><strong>Left Wheel:</strong> Connect to <span class="text-yellow-500 font-bold">PIN 0</span></li>
-                    <li><strong>Right Wheel:</strong> Connect to <span class="text-yellow-500 font-bold">PIN 1</span></li>
+                    <li><strong>Left Wheel:</strong> Connect to <span class="text-yellow-500 font-bold">PIN 0</span> (or Motor M1)</li>
+                    <li><strong>Right Wheel:</strong> Connect to <span class="text-yellow-500 font-bold">PIN 1</span> (or Motor M2)</li>
                 </ul>
             </div>
 
@@ -176,20 +176,51 @@
                 <h3 class="text-white text-sm uppercase tracking-widest border-b border-gray-700 pb-2 mb-4">Manipulator Arms (Always Active)</h3>
                 <div class="grid grid-cols-2 gap-4">
                     <ul class="space-y-3">
-                        <li><span class="key-badge">U</span> / <span class="key-badge">7</span> : Open/Close Pin 13</li>
-                        <li><span class="key-badge">I</span> / <span class="key-badge">8</span> : Open/Close Pin 14</li>
+                        <li><span class="key-badge">7</span> / <span class="key-badge">U</span> : Pin 13 (Add/Subtract)</li>
+                        <li><span class="key-badge">8</span> / <span class="key-badge">I</span> : Pin 14 (Add/Subtract)</li>
                     </ul>
                     <ul class="space-y-3">
-                        <li><span class="key-badge">O</span> / <span class="key-badge">9</span> : Open/Close Pin 15</li>
-                        <li><span class="key-badge">P</span> / <span class="key-badge">0</span> : Open/Close Pin 16</li>
+                        <li><span class="key-badge">9</span> / <span class="key-badge">O</span> : Pin 15 (Add/Subtract)</li>
+                        <li><span class="key-badge">0</span> / <span class="key-badge">P</span> : Pin 16 (Add/Subtract)</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- New Settings Section -->
     <div class="card">
-        <h2>4. Microbit Code</h2>
+        <h2>4. Custom Settings</h2>
+        <p class="mb-4">Click the <strong>GEAR ICON (⚙️)</strong> in the top menu to access advanced options.</p>
+        
+        <div class="space-y-4">
+            <div class="bg-white/5 p-4 rounded border border-white/10">
+                <h3 class="text-white text-lg">Servo Sensitivity</h3>
+                <p class="text-gray-400 text-sm">
+                    Adjust how many degrees the servo moves with each button press. 
+                    Values range from fine control (1°) to large steps (30°).
+                </p>
+            </div>
+            
+            <div class="bg-white/5 p-4 rounded border border-white/10">
+                <h3 class="text-white text-lg">Invert Direction</h3>
+                <p class="text-gray-400 text-sm">
+                    If your servo is mounted upside down, use the toggle next to the sensitivity slider to flip the "Add" and "Subtract" directions.
+                </p>
+            </div>
+
+            <div class="bg-white/5 p-4 rounded border border-white/10">
+                <h3 class="text-white text-lg">Key Remapping</h3>
+                <p class="text-gray-400 text-sm">
+                    Customize your keyboard controls. Click any button in the Settings menu, then press the new key you wish to assign. 
+                    Changes are saved automatically to your browser.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>5. Microbit Code</h2>
         <p class="mb-4">
             The Microbit needs specific code to understand the Bluetooth signals sent by this website. 
             You must flash the following MakeCode project to your device.
