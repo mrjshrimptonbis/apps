@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microbit Robot Controller</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Space Mono for that 'tech' feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* BBC Microbit Color Palette */
+            --bg-color: #1a1a1a;
+            --panel-color: #000000;
+            --accent-green: #00E463; /* Microbit Logo Green */
+            --accent-red: #FF0000;    /* LED Matrix Red */
+            --text-color: #ffffff;
+            --connector-gold: #E7A600;
+            --tab-inactive: #333333;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        /* --- Buttons --- */
+        .connect-btn {
+            background-color: #333;
+            border: 2px solid var(--accent-green);
+            color: var(--accent-green);
+            transition: all 0.3s ease;
+        }
+        
+        .connect-btn:hover {
+            background-color: var(--accent-green);
+            color: black;
+        }
+
+        .connect-btn.connected {
+            background-color: var(--accent-green);
+            color: black;
+            box-shadow: 0 0 20px var(--accent-green);
+        }
+
+        .icon-btn {
+            background-color: transparent;
+            border: 2px solid #555;
+            color: #888;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .icon-btn:hover {
+            border-color: var(--connector-gold);
+            color: var(--connector-gold);
+        }
+
+        /* D-Pad / Tank Styling */
+        .dpad-btn {
+            background-color: #222;
+            border: 2px solid #444;
+            color: #666;
+            transition: all 0.1s;
+            font-weight: bold;
+        }
+
+        .dpad-btn.active {
+            background-color: var(--accent-red);
+            border-color: var(--accent-red);
+            color: white;
+            box-shadow: 0 0 15px var(--accent-red);
+            transform: scale(0.95);
+        }
+
+        /* Speaker Button */
+        .speaker-btn {
+            background-color: #222;
+            border: 2px solid var(--connector-gold);
+            color: var(--connector-gold);
+            border-radius: 50%;
+            transition: all 0.1s;
+        }
+
+        .speaker-btn.active {
+            background-color: var(--connector-gold);
+            color: black;
+            transform: scale(0.90);
+            box-shadow: 0 0 15px var(--connector-gold);
+        }
+
+        /* Keyboard Key Styling for Servos */
+        .key-btn {
+            background-color: #222;
+            border: 1px solid #444;
+            border-bottom: 4px solid #111; /* Key depth look */
+            border-radius: 6px;
+            color: white;
+            transition: all 0.05s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 80px;
+            cursor: pointer; 
+            user-select: none;
+        }
+
+        .key-btn:active, .key-btn.active {
+            transform: translateY(3px);
+            border-bottom: 1px solid #111;
+            background-color: #333;
+            color: var(--accent-green);
+            box-shadow: 0 0 10px rgba(0, 228, 99, 0.2);
+            border-color: var(--accent-green);
+        }
+
+        .key-btn.close-btn:active, .key-btn.close-btn.active {
+             color: var(--connector-gold);
+             border-color: var(--connector-gold);
+             box-shadow: 0 0 10px rgba(231, 166, 0, 0.2);
+        }
+
+        /* Custom Input Styling for Editable Labels */
+        .editable-label {
+            background: transparent;
+            border: none;
+            text-align: center;
+            color: inherit;
+            width: 100%;
+            pointer-events: auto; 
+        }
+        .editable-label:focus {
+            outline: none;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+
+        .led-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #333;
+            border-radius: 2px;
+        }
+        .led-dot.on {
+            background-color: var(--accent-red);
+            box-shadow: 0 0 4px var(--accent-red);
+        }
+
+        /* Tab Styling */
+        .tab-btn {
+            background-color: var(--tab-inactive);
+            color: #888;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background-color: var(--panel-color);
+            color: var(--accent-green);
+            border-top: 2px solid var(--accent-green);
+        }
+
+        /* Modal Styling */
+        .modal-overlay {
+            background-color: rgba(0,0,0,0.85);
+            backdrop-filter: blur(4px);
+        }
+        .bind-row {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .bind-key {
+            background: #000;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+        .bind-key:hover {
+            background: var(--accent-green);
+            color: black;
+        }
+        .bind-key.recording {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+        .bind-key.success {
+            animation: flashGreen 0.5s ease-out;
+            background: var(--accent-green);
+            color: black;
+        }
+        
+        /* Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            cursor: pointer;
+            margin-top: -6px; 
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #333;
+            border-radius: 2px;
+        }
+
+        /* Toggle Checkbox */
+        .toggle-checkbox {
+            appearance: none;
+            width: 32px;
+            height: 16px;
+            background: #333;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #555;
+        }
+        .toggle-checkbox:checked {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+        .toggle-checkbox::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+        .toggle-checkbox:checked::after {
+            left: 17px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes flashGreen {
+            0% { background-color: white; transform: scale(1.1); }
+            100% { background-color: var(--accent-green); transform: scale(1); }
+        }
+
+    </style>
+</head>
+<body class="flex flex-col h-screen max-h-screen" onresize="resizeGrids()">
+
+    <!-- Header -->
+    <header class="p-4 flex justify-between items-center border-b border-gray-800 bg-black flex-none">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-6 bg-black border border-white rounded-sm flex items-center justify-center gap-[2px]">
+                <div class="led-dot on"></div>
+                <div class="led-dot"></div>
+                <div class="led-dot on"></div>
+            </div>
+            <div class="flex flex-col">
+                <h1 class="text-xl font-bold tracking-wider text-green-400 leading-none">MICRO:BIT<span class="text-white text-sm ml-2 opacity-70">CONTROL</span></h1>
+                <span class="text-[9px] text-gray-500 tracking-widest mt-1">BLE INTERFACE V1.9</span>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button id="settingsBtn" class="icon-btn" title="Settings & Key Bindings">
+                ⚙️
+            </button>
+            <a href="help.html" class="icon-btn no-underline font-bold" title="Help">
+                ?
+            </a>
+            <button id="connectBtn" class="connect-btn px-6 py-2 rounded-md font-bold text-sm tracking-widest flex items-center gap-2">
+                <span id="btIcon">⚡</span>
+                <span id="btText">CONNECT</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Control Area -->
+    <main class="flex-grow flex flex-col md:flex-row p-4 gap-6 items-stretch justify-center overflow-hidden">
+
+        <!-- Left Column: Driving Controls -->
+        <div id="leftColumn" class="w-full md:w-1/2 flex flex-col bg-black rounded-xl border border-gray-800 shadow-2xl relative order-2 md:order-1 overflow-hidden">
+             
+            <!-- Decorative Gold Line -->
+             <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-b-xl opacity-80 z-10"></div>
+
+            <!-- Tabs -->
+            <div class="flex w-full border-b border-gray-800 h-12 flex-none">
+                <button id="tabWASD" class="tab-btn flex-1 font-bold tracking-widest text-sm active" onclick="switchMode('WASD')">WASD MODE</button>
+                <button id="tabTank" class="tab-btn flex-1 font-bold tracking-widest text-sm" onclick="switchMode('TANK')">L/R TANK MODE</button>
+            </div>
+
+            <!-- Content Container -->
+            <div id="driveContainer" class="flex-grow relative p-6 flex items-center justify-center overflow-hidden">
+
+                <!-- WASD Panel -->
+                <div id="panelWASD" class="flex items-center justify-center transition-opacity duration-200">
+                    <div id="gridWASD" class="grid grid-cols-3 grid-rows-3 gap-3">
+                        <!-- Top Row -->
+                        <div></div>
+                        <button id="btnUp" class="dpad-btn rounded-t-lg flex flex-col items-center justify-center hover:bg-gray-800 w-full h-full">
+                            <span class="text-2xl">▲</span>
+                            <span class="text-[10px] opacity-50 display-key" data-action="forward">W</span>
+                        </button>
+                        <div></div>
+                        
+                        <!-- Middle Row -->
+                        <button id="btnLeft" class="dpad-btn rounded-l-lg flex flex-col items-center justify-center hover:bg-gray-800 w-full h-full">
+                            <span class="text-2xl">◀</span>
+                            <span class="text-[10px] opacity-50 display-key" data-action="left">A</span>
+                        </button>
+                        
+                        <!-- Center Speaker -->
+                        <div class="flex items-center justify-center w-full h-full">
+                            <button id="btnSpeaker" class="speaker-btn w-full h-full flex flex-col items-center justify-center shadow-lg rounded-full aspect-square" title="Horn">
+                                <span class="text-xl">🔊</span>
+                                <span class="text-[8px] mt-1 opacity-70 display-key" data-action="horn">SPACE</span>
+                            </button>
+                        </div>
+        
+                        <button id="btnRight" class="dpad-btn rounded-r-lg flex flex-col items-center justify-center hover:bg-gray-800 w-full h-full">
+                            <span class="text-2xl">▶</span>
+                            <span class="text-[10px] opacity-50 display-key" data-action="right">D</span>
+                        </button>
+                        
+                        <!-- Bottom Row -->
+                        <div></div>
+                        <button id="btnDown" class="dpad-btn rounded-b-lg flex flex-col items-center justify-center hover:bg-gray-800 w-full h-full">
+                            <span class="text-2xl">▼</span>
+                            <span class="text-[10px] opacity-50 display-key" data-action="backward">S</span>
+                        </button>
+                        <div></div>
+                    </div>
+                </div>
+
+                <!-- Tank Panel (Hidden by default) -->
+                <div id="panelTank" class="hidden flex items-center justify-center transition-opacity duration-200">
+                    <div id="gridTank" class="grid grid-cols-3 grid-rows-2 gap-3">
+                        
+                        <!-- Left Track Buttons -->
+                        <button id="btnL_Fwd" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-1 row-start-1 w-full h-full" onmousedown="startTank('leftforward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftforward', this)" ontouchend="stopTank(this)">
+                            ▲ <span class="text-[10px] opacity-50 display-key" data-action="left_fwd">1</span>
+                        </button>
+                        <button id="btnL_Back" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-1 row-start-2 w-full h-full" onmousedown="startTank('leftbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('leftbackward', this)" ontouchend="stopTank(this)">
+                            ▼ <span class="text-[10px] opacity-50 display-key" data-action="left_back">Q</span>
+                        </button>
+
+                        <!-- Center Speaker (Spans 2 rows vertically) -->
+                        <div class="col-start-2 row-start-1 row-span-2 flex items-center justify-center w-full h-full">
+                            <button id="btnSpeakerTank" class="speaker-btn w-3/4 h-auto aspect-square flex flex-col items-center justify-center shadow-lg rounded-full" title="Horn">
+                                <span class="text-xl">🔊</span>
+                                <span class="text-[8px] mt-1 opacity-70 display-key" data-action="horn">SPACE</span>
+                            </button>
+                        </div>
+
+                        <!-- Right Track Buttons -->
+                        <button id="btnR_Fwd" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-3 row-start-1 w-full h-full" onmousedown="startTank('rightforward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('rightforward', this)" ontouchend="stopTank(this)">
+                            ▲ <span class="text-[10px] opacity-50 display-key" data-action="right_fwd">3</span>
+                        </button>
+                        <button id="btnR_Back" class="dpad-btn rounded-lg flex flex-col items-center justify-center hover:bg-gray-800 text-2xl col-start-3 row-start-2 w-full h-full" onmousedown="startTank('rightbackward', this)" onmouseup="stopTank(this)" onmouseleave="stopTank(this)" ontouchstart="startTank('rightbackward', this)" ontouchend="stopTank(this)">
+                            ▼ <span class="text-[10px] opacity-50 display-key" data-action="right_back">E</span>
+                        </button>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Right Column: Servo Keyboard Grid -->
+        <div class="w-full md:w-1/2 flex flex-col p-6 bg-black rounded-xl border border-gray-800 shadow-2xl relative order-1 md:order-2">
+            <!-- Decorative Gold Edge Connector line -->
+            <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-b-xl opacity-80"></div>
+            
+            <div class="flex justify-between items-center mb-1 border-b border-gray-800 pb-2">
+                <div class="flex flex-col">
+                    <h2 class="text-xs font-bold text-gray-400 tracking-widest">MANIPULATOR ARMS</h2>
+                    <span class="text-[9px] text-gray-600 font-mono">CONTROLS MOTORS ON PINS 13-16</span>
+                </div>
+                <div class="text-[10px] text-gray-600 font-mono">HOLD TO MOVE</div>
+            </div>
+
+            <!-- Keyboard Layout Grid -->
+            <div class="grid grid-cols-4 gap-3 h-full pb-4 pt-2">
+                
+                <!-- Headers with Editable Labels -->
+                <div class="flex flex-col items-center justify-end pb-2">
+                    <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 13</div>
+                    <input type="text" id="label_servo_0" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400" oninput="saveServoLabel(0, this.value)">
+                </div>
+                <div class="flex flex-col items-center justify-end pb-2">
+                    <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 14</div>
+                    <input type="text" id="label_servo_1" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400" oninput="saveServoLabel(1, this.value)">
+                </div>
+                <div class="flex flex-col items-center justify-end pb-2">
+                    <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 15</div>
+                    <input type="text" id="label_servo_2" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400" oninput="saveServoLabel(2, this.value)">
+                </div>
+                <div class="flex flex-col items-center justify-end pb-2">
+                    <div class="text-center text-green-400 font-bold text-base uppercase tracking-wider leading-none mb-1">PIN 16</div>
+                    <input type="text" id="label_servo_3" class="text-[10px] text-white font-mono bg-gray-800 px-2 py-0.5 rounded text-center w-20 border-none focus:ring-1 focus:ring-green-400" oninput="saveServoLabel(3, this.value)">
+                </div>
+
+                <!-- Row 1: TOP (Keys 7,8,9,0) -> ADD/OPEN functionality -->
+                <div id="s1_add" class="key-btn" data-cmd="pin13add">
+                    <span class="text-2xl font-bold display-key" data-action="s1_add">7</span>
+                    <input type="text" value="ADD" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
+
+                <div id="s2_add" class="key-btn" data-cmd="pin14add">
+                    <span class="text-2xl font-bold display-key" data-action="s2_add">8</span>
+                    <input type="text" value="ADD" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
+
+                <div id="s3_add" class="key-btn" data-cmd="pin15add">
+                    <span class="text-2xl font-bold display-key" data-action="s3_add">9</span>
+                    <input type="text" value="ADD" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
+
+                <div id="s4_add" class="key-btn" data-cmd="pin16add">
+                    <span class="text-2xl font-bold display-key" data-action="s4_add">0</span>
+                    <input type="text" value="ADD" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
+
+                <!-- Row 2: BOTTOM (Keys U,I,O,P) -> SUBTRACT/CLOSE functionality -->
+                <div id="s1_sub" class="key-btn close-btn" data-cmd="pin13sub">
+                    <span class="text-2xl font-bold display-key" data-action="s1_sub">U</span>
+                    <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
+
+                <div id="s2_sub" class="key-btn close-btn" data-cmd="pin14sub">
+                    <span class="text-2xl font-bold display-key" data-action="s2_sub">I</span>
+                    <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
+
+                <div id="s3_sub" class="key-btn close-btn" data-cmd="pin15sub">
+                    <span class="text-2xl font-bold display-key" data-action="s3_sub">O</span>
+                    <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
+
+                <div id="s4_sub" class="key-btn close-btn" data-cmd="pin16sub">
+                    <span class="text-2xl font-bold display-key" data-action="s4_sub">P</span>
+                    <input type="text" value="SUBTRACT" class="editable-label text-[9px] opacity-70 mt-1" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer / Log -->
+    <footer class="p-2 bg-black border-t border-gray-900 text-center flex-none">
+        <div id="statusLog" class="text-xs text-gray-500 font-mono">> WAITING FOR INPUT...</div>
+    </footer>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="fixed inset-0 modal-overlay hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-[#111] border border-gray-700 rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="p-4 border-b border-gray-800 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-green-400 tracking-wider">SETTINGS</h2>
+                <button id="closeSettings" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto" id="settingsContent">
+                
+                <!-- SERVO SPEED SECTION -->
+                <div class="mb-8">
+                    <h3 class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4">SERVO SPEED</h3>
+                    <div id="servoSlidersContainer">
+                        <!-- Sliders generated by JS -->
+                    </div>
+                </div>
+
+                <!-- KEY BINDINGS SECTION -->
+                <div>
+                    <h3 class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4">KEY BINDINGS</h3>
+                    <div id="bindingsList">
+                        <!-- Key bindings generated by JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="p-4 border-t border-gray-800 flex justify-end gap-4">
+                <button onclick="resetToDefaults()" class="px-4 py-2 rounded bg-red-900/30 text-red-400 border border-red-900 hover:bg-red-900/50 text-xs font-bold tracking-widest">RESET DEFAULTS</button>
+                <button onclick="document.getElementById('settingsModal').classList.add('hidden')" class="px-6 py-2 rounded bg-white/10 text-white hover:bg-white/20 text-xs font-bold tracking-widest">DONE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Configuration ---
+        const UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+        const UART_TX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
+        const UART_RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
+
+        // --- Config Objects ---
+
+        // 1. Key Mappings
+        const defaultBindings = {
+            // WASD
+            'forward':    { key: 'w', mode: 'WASD',   label: 'Drive Forward',    btnId: 'btnUp',            cmd: 'forward' },
+            'backward':   { key: 's', mode: 'WASD',   label: 'Drive Backward',   btnId: 'btnDown',          cmd: 'backward' },
+            'left':       { key: 'a', mode: 'WASD',   label: 'Turn Left',        btnId: 'btnLeft',          cmd: 'left' },
+            'right':      { key: 'd', mode: 'WASD',   label: 'Turn Right',       btnId: 'btnRight',         cmd: 'right' },
+            // TANK
+            'left_fwd':   { key: '1', mode: 'TANK',   label: 'Left Track Fwd',   btnId: 'btnL_Fwd',         cmd: 'leftforward' },
+            'left_back':  { key: 'q', mode: 'TANK',   label: 'Left Track Back',  btnId: 'btnL_Back',        cmd: 'leftbackward' },
+            'right_fwd':  { key: '3', mode: 'TANK',   label: 'Right Track Fwd',  btnId: 'btnR_Fwd',         cmd: 'rightforward' },
+            'right_back': { key: 'e', mode: 'TANK',   label: 'Right Track Back', btnId: 'btnR_Back',        cmd: 'rightbackward' },
+            // SERVOS
+            's1_add': { key: '7', mode: 'ALWAYS', label: 'Add',      btnId: 's1_add', cmd: 'pin13add', servoIndex: 0 },
+            's1_sub': { key: 'u', mode: 'ALWAYS', label: 'Subtract', btnId: 's1_sub', cmd: 'pin13sub', servoIndex: 0 },
+            's2_add': { key: '8', mode: 'ALWAYS', label: 'Add',      btnId: 's2_add', cmd: 'pin14add', servoIndex: 1 },
+            's2_sub': { key: 'i', mode: 'ALWAYS', label: 'Subtract', btnId: 's2_sub', cmd: 'pin14sub', servoIndex: 1 },
+            's3_add': { key: '9', mode: 'ALWAYS', label: 'Add',      btnId: 's3_add', cmd: 'pin15add', servoIndex: 2 },
+            's3_sub': { key: 'o', mode: 'ALWAYS', label: 'Subtract', btnId: 's3_sub', cmd: 'pin15sub', servoIndex: 2 },
+            's4_add': { key: '0', mode: 'ALWAYS', label: 'Add',      btnId: 's4_add', cmd: 'pin16add', servoIndex: 3 },
+            's4_sub': { key: 'p', mode: 'ALWAYS', label: 'Subtract', btnId: 's4_sub', cmd: 'pin16sub', servoIndex: 3 },
+            // MISC
+            'horn': { key: ' ', mode: 'ALWAYS', label: 'Horn', btnId: ['btnSpeaker', 'btnSpeakerTank'], cmd: 'beep' }
+        };
+
+        // 2. Servo Speed
+        // Values are the interval delay in milliseconds between 1° steps.
+        // Lower = faster movement.
+        const sensitivityValues = [200, 150, 120, 90, 60, 40, 20];
+        const speedLabels       = ['VERY SLOW', 'SLOW', 'SLOW+', 'MEDIUM', 'MEDIUM+', 'FAST', 'VERY FAST'];
+        const defaultServoConfig = [4, 4, 4, 4]; // index 4 = 60ms = MEDIUM+
+
+        const defaultServoLabels = ["SERVO 1", "SERVO 2", "SERVO 3", "SERVO 4"];
+        const defaultServoInvert = [false, false, false, false];
+
+        // --- Global State ---
+        let currentBindings = JSON.parse(localStorage.getItem('robotKeyConfigV3')) || JSON.parse(JSON.stringify(defaultBindings));
+        let servoConfig  = JSON.parse(localStorage.getItem('robotServoConfig'))  || [...defaultServoConfig];
+        let servoLabels  = JSON.parse(localStorage.getItem('robotServoLabels'))  || [...defaultServoLabels];
+        let servoInvert  = JSON.parse(localStorage.getItem('robotServoInvert'))  || [...defaultServoInvert];
+
+        let keyLookup = {};
+        let uBitDevice;
+        let rxCharacteristic;
+        let connected    = false;
+        let drivingMode  = 'WASD';
+        let remappingAction  = null;
+        let justBoundAction  = null;
+
+        // --- Servo Hold State ---
+        // Tracks the active setInterval handle for servo hold-to-move.
+        let servoHoldInterval = null;
+
+        // --- Init ---
+        function initSystem() {
+            rebuildKeyLookup();
+            updateUIKeys();
+            loadServoLabels();
+            renderSettingsModal();
+            resizeGrids();
+            window.addEventListener('resize', resizeGrids);
+        }
+
+        // --- Responsive Grid Sizing ---
+        function resizeGrids() {
+            const container = document.getElementById('driveContainer');
+            const wasdGrid  = document.getElementById('gridWASD');
+            const tankGrid  = document.getElementById('gridTank');
+            if (!container) return;
+
+            const w = container.clientWidth  - 48;
+            const h = container.clientHeight - 48;
+
+            const sizeWASD = Math.min(w, h);
+            if (wasdGrid) {
+                wasdGrid.style.width  = sizeWASD + 'px';
+                wasdGrid.style.height = sizeWASD + 'px';
+            }
+
+            let tankW, tankH;
+            if (w / 1.5 <= h) {
+                tankW = w;
+                tankH = w / 1.5;
+            } else {
+                tankH = h;
+                tankW = h * 1.5;
+            }
+            if (tankGrid) {
+                tankGrid.style.width  = tankW + 'px';
+                tankGrid.style.height = tankH + 'px';
+            }
+        }
+
+        function rebuildKeyLookup() {
+            keyLookup = {};
+            for (const [actionId, config] of Object.entries(currentBindings)) {
+                const k = config.key.toLowerCase();
+                if (!keyLookup[k]) keyLookup[k] = [];
+                keyLookup[k].push({ actionId, ...config });
+            }
+        }
+
+        function updateUIKeys() {
+            document.querySelectorAll('.display-key').forEach(el => {
+                const action = el.getAttribute('data-action');
+                if (action && currentBindings[action]) {
+                    let k = currentBindings[action].key.toUpperCase();
+                    if (k === ' ') k = 'SPACE';
+                    el.innerText = k;
+                }
+            });
+        }
+
+        function saveConfig() {
+            localStorage.setItem('robotKeyConfigV3', JSON.stringify(currentBindings));
+            localStorage.setItem('robotServoConfig',  JSON.stringify(servoConfig));
+            localStorage.setItem('robotServoLabels',  JSON.stringify(servoLabels));
+            localStorage.setItem('robotServoInvert',  JSON.stringify(servoInvert));
+            rebuildKeyLookup();
+            updateUIKeys();
+        }
+
+        function resetToDefaults() {
+            currentBindings = JSON.parse(JSON.stringify(defaultBindings));
+            servoConfig  = [...defaultServoConfig];
+            servoLabels  = [...defaultServoLabels];
+            servoInvert  = [...defaultServoInvert];
+            saveConfig();
+            loadServoLabels();
+            renderSettingsModal();
+        }
+
+        // --- Label Logic ---
+        function saveServoLabel(index, val) {
+            servoLabels[index] = val;
+            saveConfig();
+        }
+
+        function loadServoLabels() {
+            for (let i = 0; i < 4; i++) {
+                const input = document.getElementById(`label_servo_${i}`);
+                if (input) input.value = servoLabels[i];
+            }
+        }
+
+        // --- Settings Modal ---
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            renderSettingsModal();
+            document.getElementById('settingsModal').classList.remove('hidden');
+        });
+
+        document.getElementById('closeSettings').addEventListener('click', () => {
+            document.getElementById('settingsModal').classList.add('hidden');
+            remappingAction = null;
+        });
+
+        function renderSettingsModal() {
+            // 1. Servo Speed Sliders
+            const slidersContainer = document.getElementById('servoSlidersContainer');
+            slidersContainer.innerHTML = '';
+
+            for (let i = 0; i < 4; i++) {
+                const row = document.createElement('div');
+                row.className = "mb-4 bg-white/5 p-3 rounded border border-white/10";
+
+                const header = document.createElement('div');
+                header.className = "flex justify-between items-center mb-2";
+
+                const title = document.createElement('span');
+                title.className = "text-green-400 font-bold text-xs";
+                title.innerText = `${servoLabels[i]} (PIN ${13 + i})`;
+
+                const valDisplay = document.createElement('span');
+                valDisplay.className = "text-white font-mono text-xs";
+                valDisplay.innerText = speedLabels[servoConfig[i]];
+
+                header.appendChild(title);
+                header.appendChild(valDisplay);
+
+                const contentLine = document.createElement('div');
+                contentLine.className = "flex items-center gap-4";
+
+                const slider = document.createElement('input');
+                slider.type  = "range";
+                slider.min   = 0;
+                slider.max   = 6;
+                slider.step  = 1;
+                slider.className = "flex-grow";
+                slider.value = servoConfig[i];
+                slider.oninput = (e) => {
+                    servoConfig[i] = parseInt(e.target.value);
+                    valDisplay.innerText = speedLabels[servoConfig[i]];
+                    saveConfig();
+                };
+
+                const invertContainer = document.createElement('div');
+                invertContainer.className = "flex items-center gap-2";
+
+                const invertLabel = document.createElement('span');
+                invertLabel.innerText   = "INVERT +/-";
+                invertLabel.className   = "text-[9px] text-gray-400 font-bold tracking-wider";
+
+                const invertCheckbox = document.createElement('input');
+                invertCheckbox.type      = "checkbox";
+                invertCheckbox.className = "toggle-checkbox";
+                invertCheckbox.checked   = servoInvert[i];
+                invertCheckbox.onchange  = (e) => {
+                    servoInvert[i] = e.target.checked;
+                    saveConfig();
+                };
+
+                invertContainer.appendChild(invertLabel);
+                invertContainer.appendChild(invertCheckbox);
+                contentLine.appendChild(slider);
+                contentLine.appendChild(invertContainer);
+                row.appendChild(header);
+                row.appendChild(contentLine);
+                slidersContainer.appendChild(row);
+            }
+
+            // 2. Key Bindings
+            const container = document.getElementById('bindingsList');
+            container.innerHTML = '';
+
+            const groups = {
+                'Driving (WASD)':    ['forward', 'backward', 'left', 'right'],
+                'Driving (Tank)':    ['left_fwd', 'left_back', 'right_fwd', 'right_back'],
+                'Manipulator Arms':  ['s1_add', 's1_sub', 's2_add', 's2_sub', 's3_add', 's3_sub', 's4_add', 's4_sub'],
+                'Misc':              ['horn']
+            };
+
+            for (const [groupName, actions] of Object.entries(groups)) {
+                const groupHeader = document.createElement('h3');
+                groupHeader.className = "text-gray-500 text-xs font-bold uppercase tracking-widest mt-4 mb-2";
+                groupHeader.innerText = groupName;
+                container.appendChild(groupHeader);
+
+                actions.forEach(actionId => {
+                    const config = currentBindings[actionId];
+                    if (!config) return;
+
+                    const row = document.createElement('div');
+                    row.className = 'bind-row';
+
+                    const label = document.createElement('span');
+                    label.className = "text-sm text-gray-300";
+
+                    if (typeof config.servoIndex !== 'undefined') {
+                        const baseName = servoLabels[config.servoIndex];
+                        const suffix   = actionId.includes('add') ? 'Add' : 'Subtract';
+                        label.innerText = `${baseName} ${suffix}`;
+                    } else {
+                        label.innerText = config.label;
+                    }
+
+                    const btn = document.createElement('button');
+                    const isSuccess   = justBoundAction === actionId;
+                    const isRecording = remappingAction === actionId;
+
+                    let btnClass = 'bind-key';
+                    if (isRecording) btnClass += ' recording';
+                    if (isSuccess)   btnClass += ' success';
+                    btn.className = btnClass;
+
+                    let displayKey = config.key.toUpperCase();
+                    if (displayKey === ' ') displayKey = 'SPACE';
+                    btn.innerText = isRecording ? 'PRESS KEY...' : displayKey;
+
+                    btn.onclick = () => {
+                        remappingAction = actionId;
+                        justBoundAction = null;
+                        renderSettingsModal();
+                    };
+
+                    row.appendChild(label);
+                    row.appendChild(btn);
+                    container.appendChild(row);
+                });
+            }
+
+            if (justBoundAction) {
+                setTimeout(() => { justBoundAction = null; }, 500);
+            }
+        }
+
+        // --- Bluetooth ---
+        async function connect() {
+            try {
+                log("> REQUESTING DEVICE...");
+                uBitDevice = await navigator.bluetooth.requestDevice({
+                    filters: [{ namePrefix: "BBC micro:bit" }],
+                    optionalServices: [UART_SERVICE_UUID]
+                });
+                uBitDevice.addEventListener('gattserverdisconnected', onDisconnected);
+                const server  = await uBitDevice.gatt.connect();
+                const service = await server.getPrimaryService(UART_SERVICE_UUID);
+                const txCharacteristic = await service.getCharacteristic(UART_TX_CHARACTERISTIC_UUID);
+                txCharacteristic.startNotifications();
+                txCharacteristic.addEventListener("characteristicvaluechanged", onTxCharacteristicValueChanged);
+                rxCharacteristic = await service.getCharacteristic(UART_RX_CHARACTERISTIC_UUID);
+                connected = true;
+                updateConnectionUI();
+                log("> CONNECTED_");
+            } catch (error) {
+                log("> ERROR: " + error);
+                console.error(error);
+            }
+        }
+
+        function disconnect() {
+            if (!uBitDevice) return;
+            if (uBitDevice.gatt.connected) uBitDevice.gatt.disconnect();
+        }
+
+        function onDisconnected() {
+            connected = false;
+            updateConnectionUI();
+            log("> DISCONNECTED_");
+        }
+
+        function updateConnectionUI() {
+            const btText = document.getElementById('btText');
+            if (connected) {
+                connectBtn.classList.add('connected');
+                btText.innerText = "DISCONNECT";
+            } else {
+                connectBtn.classList.remove('connected');
+                btText.innerText = "CONNECT";
+            }
+        }
+
+        let queue = Promise.resolve();
+        function queueGattOperation(operation) {
+            queue = queue.then(operation, operation);
+            return queue;
+        }
+
+        async function sendUART(data) {
+            log("> SENDING: " + data);
+            if (!connected || !rxCharacteristic) {
+                console.log("Simulated Send:", data);
+                return;
+            }
+            const encoder    = new TextEncoder();
+            const stringData = data + "\n";
+            queueGattOperation(() =>
+                rxCharacteristic.writeValue(encoder.encode(stringData))
+                    .catch(error => console.error('Write Error:', error))
+            );
+        }
+
+        function onTxCharacteristicValueChanged(event) {
+            const receivedData = new TextDecoder().decode(event.target.value);
+            console.log("RX:", receivedData);
+        }
+
+        function log(msg) {
+            statusLog.innerText = msg;
+        }
+
+        connectBtn.addEventListener('click', () => {
+            if (connected) disconnect();
+            else connect();
+        });
+
+        // --- Mode Switching ---
+        function switchMode(mode) {
+            drivingMode = mode;
+            const tabWASD  = document.getElementById('tabWASD');
+            const tabTank  = document.getElementById('tabTank');
+            const panelWASD = document.getElementById('panelWASD');
+            const panelTank = document.getElementById('panelTank');
+
+            if (mode === 'WASD') {
+                tabWASD.classList.add('active');    tabTank.classList.remove('active');
+                panelWASD.classList.remove('hidden'); panelTank.classList.add('hidden');
+                log("> MODE: STANDARD WASD");
+            } else {
+                tabWASD.classList.remove('active'); tabTank.classList.add('active');
+                panelWASD.classList.add('hidden');  panelTank.classList.remove('hidden');
+                log("> MODE: L/R TANK CONTROL");
+            }
+            resizeGrids();
+        }
+
+        // --- Tank Buttons ---
+        window.startTank = function(cmd, el) {
+            el.classList.add('active');
+            sendUART(cmd);
+        };
+        window.stopTank = function(el) {
+            el.classList.remove('active');
+            sendUART('stop');
+        };
+
+        // --- Command Processor ---
+        // Always sends a 1-degree step; speed is controlled by the hold interval.
+        function processAndSendCommand(actionConfig) {
+            let cmd = actionConfig.cmd;
+            if (typeof actionConfig.servoIndex !== 'undefined') {
+                const idx = actionConfig.servoIndex;
+                if (servoInvert[idx]) {
+                    if (cmd.includes('add')) cmd = cmd.replace('add', 'sub');
+                    else if (cmd.includes('sub')) cmd = cmd.replace('sub', 'add');
+                }
+                cmd += 1; // Always 1° per tick — rate of change is set by the interval
+            }
+            sendUART(cmd);
+        }
+
+        // --- Servo Hold-to-Move ---
+        function startServoHold(btn, rawCmd, servoIdx) {
+            if (servoHoldInterval) return; // Guard against duplicate starts
+            btn.classList.add('active');
+
+            const config     = { cmd: rawCmd, servoIndex: servoIdx };
+            const intervalMs = sensitivityValues[servoConfig[servoIdx]];
+
+            // Fire immediately so a quick tap still registers
+            processAndSendCommand(config);
+
+            servoHoldInterval = setInterval(() => {
+                processAndSendCommand(config);
+            }, intervalMs);
+        }
+
+        function stopServoHold(btn) {
+            btn.classList.remove('active');
+            clearInterval(servoHoldInterval);
+            servoHoldInterval = null;
+        }
+
+        // --- Global Keyboard Handler ---
+        document.addEventListener('keydown', (e) => {
+            // Remapping mode
+            if (remappingAction) {
+                e.preventDefault();
+                const newKey = e.key.toLowerCase();
+                if (newKey === 'escape') {
+                    remappingAction = null;
+                    renderSettingsModal();
+                    return;
+                }
+                currentBindings[remappingAction].key = newKey;
+                justBoundAction = remappingAction;
+                remappingAction = null;
+                saveConfig();
+                renderSettingsModal();
+                return;
+            }
+
+            if (e.repeat) return;
+            if (e.target.tagName === 'INPUT') return;
+
+            const key     = e.key.toLowerCase();
+            const actions = keyLookup[key];
+
+            if (actions) {
+                actions.forEach(action => {
+                    if (action.mode === 'ALWAYS' || action.mode === drivingMode) {
+                        e.preventDefault();
+                        const btnIds = Array.isArray(action.btnId) ? action.btnId : [action.btnId];
+                        btnIds.forEach(id => {
+                            const btn = document.getElementById(id);
+                            if (btn) btn.classList.add('active');
+                        });
+
+                        if (typeof action.servoIndex !== 'undefined') {
+                            // Servo: start hold-to-move loop
+                            const btn = document.getElementById(action.btnId);
+                            startServoHold(btn, action.cmd, action.servoIndex);
+                        } else {
+                            processAndSendCommand(action);
+                        }
+                    }
+                });
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (remappingAction) return;
+            if (e.target.tagName === 'INPUT') return;
+
+            const key     = e.key.toLowerCase();
+            const actions = keyLookup[key];
+
+            if (actions) {
+                let stopSent = false;
+                actions.forEach(action => {
+                    if (action.mode === 'ALWAYS' || action.mode === drivingMode) {
+                        const btnIds = Array.isArray(action.btnId) ? action.btnId : [action.btnId];
+                        btnIds.forEach(id => {
+                            const btn = document.getElementById(id);
+                            if (btn) btn.classList.remove('active');
+                        });
+
+                        if (typeof action.servoIndex !== 'undefined') {
+                            // Servo: stop hold-to-move loop
+                            const btn = document.getElementById(action.btnId);
+                            stopServoHold(btn);
+                        } else if (!stopSent && (action.mode === 'WASD' || action.mode === 'TANK')) {
+                            sendUART("stop");
+                            stopSent = true;
+                        }
+                    }
+                });
+            }
+        });
+
+        // --- Mouse/Touch for WASD & Horn Buttons ---
+        const setupButton = (btnId, cmdStart, cmdEnd) => {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            const start = (e) => {
+                if (e.target.tagName === 'INPUT') return;
+                if (e.cancelable) e.preventDefault();
+                btn.classList.add('active');
+                if (cmdStart) sendUART(cmdStart);
+            };
+            const end = (e) => {
+                if (e.target.tagName === 'INPUT') return;
+                if (e.cancelable) e.preventDefault();
+                btn.classList.remove('active');
+                if (cmdEnd) sendUART(cmdEnd);
+            };
+            btn.addEventListener('mousedown', start);
+            btn.addEventListener('mouseup', end);
+            btn.addEventListener('mouseleave', end);
+            btn.addEventListener('touchstart', start);
+            btn.addEventListener('touchend', end);
+        };
+
+        setupButton('btnUp',          "forward",  "stop");
+        setupButton('btnDown',        "backward", "stop");
+        setupButton('btnLeft',        "left",     "stop");
+        setupButton('btnRight',       "right",    "stop");
+        setupButton('btnSpeaker',     "beep",     null);
+        setupButton('btnSpeakerTank', "beep",     null);
+
+        // --- Mouse/Touch for Servo Buttons (Hold-to-Move) ---
+        document.querySelectorAll('.key-btn').forEach(btn => {
+            const rawCmd = btn.getAttribute('data-cmd');
+            if (!rawCmd) return;
+
+            let servoIdx = 0;
+            if (rawCmd.includes('pin14')) servoIdx = 1;
+            if (rawCmd.includes('pin15')) servoIdx = 2;
+            if (rawCmd.includes('pin16')) servoIdx = 3;
+
+            const start = (e) => {
+                if (e.target.tagName === 'INPUT') return;
+                if (e.cancelable) e.preventDefault();
+                startServoHold(btn, rawCmd, servoIdx);
+            };
+            const end = (e) => {
+                if (e.target.tagName === 'INPUT') return;
+                if (e.cancelable) e.preventDefault();
+                stopServoHold(btn);
+            };
+
+            btn.addEventListener('mousedown',  start);
+            btn.addEventListener('mouseup',    end);
+            btn.addEventListener('mouseleave', end);
+            btn.addEventListener('touchstart', start);
+            btn.addEventListener('touchend',   end);
+            btn.addEventListener('touchcancel', end);
+        });
+
+        initSystem();
+
+    </script>
+</body>
+</html>
